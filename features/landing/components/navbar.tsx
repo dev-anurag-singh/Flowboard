@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Menu, X, LayoutGrid } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { ThemeToggle } from "./theme-toggle"
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -25,8 +26,8 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-300",
-        isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-border"
+        isScrolled || isOpen
+          ? "bg-background/95 backdrop-blur-md border-b border-border"
           : "bg-transparent"
       )}
     >
@@ -56,7 +57,8 @@ export function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Sign in</Link>
             </Button>
@@ -89,6 +91,9 @@ export function Navbar() {
               </a>
             ))}
             <div className="flex flex-col gap-2 pt-3 border-t border-border">
+              <div className="flex justify-center py-1">
+                <ThemeToggle />
+              </div>
               <Button variant="outline" size="sm" asChild>
                 <Link href="/login">Sign in</Link>
               </Button>
