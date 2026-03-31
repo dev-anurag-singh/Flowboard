@@ -1,0 +1,6 @@
+export { Navbar } from "./components/navbar"
+export { Hero } from "./components/hero"
+export { FeaturesSection } from "./components/features-section"
+export { HowItWorks } from "./components/how-it-works"
+export { CtaBanner } from "./components/cta-banner"
+export { Footer } from "./components/footer"
