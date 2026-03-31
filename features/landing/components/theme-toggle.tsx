@@ -40,7 +40,7 @@ export function ThemeToggle({ variant = "inline" }: Props) {
 
   if (variant === "card") {
     return (
-      <div className={cn("grid place-content-center rounded-md bg-background py-4 mx-3 lg:mx-6")}>
+      <div className="grid place-content-center rounded-md bg-background py-3.5">
         {toggle}
       </div>
     )
