@@ -59,8 +59,7 @@ flowboard/
 ### Import conventions — always `@/` aliases, never relative `../../`
 
 ```ts
-import { Button } from '@/components/ui'
-import { useDebounce } from '@/hooks'
+import { Button } from '@/components/ui/button'   // shadcn: import directly, no barrel
 import { BoardCard } from '@/features/board'
 import { formatDate } from '@/utils'
 import { db } from '@/lib'
@@ -132,6 +131,12 @@ Always return consistent JSON shapes:
 - Secrets go in `.env.local` (gitignored — never commit)
 - All variables documented in `.env.example` (committed, no real values)
 - Client-safe variables prefixed with `NEXT_PUBLIC_`
+
+## Animations
+
+- Use `motion` library for all animations — never write custom animation hooks or CSS keyframes
+- Use `whileInView` + `viewport={{ once: true }}` for scroll-triggered animations
+- Components using `motion` must be `'use client'`
 
 ## Code Style
 
