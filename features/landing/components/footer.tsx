@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutGrid } from "lucide-react"
+import { LogoFull } from "@/components/Logo"
 
 export function Footer() {
   return (
@@ -8,12 +8,7 @@ export function Footer() {
         <div className="flex flex-col items-center gap-6 py-10 sm:flex-row sm:justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary">
-              <LayoutGrid className="h-3.5 w-3.5 text-primary-foreground" />
-            </div>
-            <span className="text-sm font-bold tracking-tight text-foreground">
-              flowboard
-            </span>
+            <LogoFull />
           </Link>
 
           {/* Links */}

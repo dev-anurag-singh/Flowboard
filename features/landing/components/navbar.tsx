@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid } from "lucide-react";
+import { LogoFull } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
@@ -34,12 +34,7 @@ export function Navbar() {
         <div className="flex min-h-16 items-center justify-between gap-3 py-3 md:h-16 md:py-0">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
-              <LayoutGrid className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="text-base font-bold tracking-tight text-foreground">
-              flowboard
-            </span>
+            <LogoFull />
           </Link>
 
           {/* In-page nav */}
