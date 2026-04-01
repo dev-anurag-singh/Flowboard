@@ -1,39 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { motion } from "motion/react"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-const columns = [
-  {
-    label: "Todo",
-    color: "bg-blue-400",
-    tasks: [
-      { title: "Build onboarding UI", sub: "0 of 2 subtasks" },
-      { title: "Design search pages", sub: "0 of 3 subtasks" },
-      { title: "Build settings UI", sub: "0 of 1 subtask" },
-    ],
-  },
-  {
-    label: "Doing",
-    color: "bg-amber-400",
-    tasks: [
-      { title: "Design settings", sub: "1 of 3 subtasks" },
-      { title: "Add account management", sub: "0 of 2 subtasks" },
-      { title: "Design onboarding flow", sub: "1 of 2 subtasks" },
-    ],
-  },
-  {
-    label: "Done",
-    color: "bg-emerald-400",
-    tasks: [
-      { title: "Conduct wireframe tests", sub: "2 of 2 subtasks" },
-      { title: "Create wireframe prototype", sub: "1 of 1 subtask" },
-      { title: "Usability review", sub: "3 of 3 subtasks" },
-    ],
-  },
-]
 
 export function Hero() {
   return (
@@ -97,7 +68,7 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Kanban mockup */}
+          {/* Hero image */}
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -107,46 +78,24 @@ export function Hero() {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="rounded-xl border border-border bg-card shadow-2xl overflow-hidden"
+              className="rounded-xl shadow-2xl overflow-hidden"
             >
-              {/* Board header */}
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <span className="text-sm font-semibold text-foreground">
-                  Platform Launch
-                </span>
-                <div className="flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground">
-                  + Add New Task
-                </div>
-              </div>
-
-              {/* Columns */}
-              <div className="grid grid-cols-3 gap-3 p-4">
-                {columns.map((col) => (
-                  <div key={col.label}>
-                    <div className="mb-3 flex items-center gap-1.5">
-                      <div className={`h-2 w-2 rounded-full ${col.color}`} />
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        {col.label}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {col.tasks.map((task) => (
-                        <div
-                          key={task.title}
-                          className="rounded-lg border border-border/60 bg-background p-2.5"
-                        >
-                          <p className="text-xs font-medium leading-snug text-foreground">
-                            {task.title}
-                          </p>
-                          <p className="mt-1.5 text-[10px] text-muted-foreground">
-                            {task.sub}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Image
+                src="/hero-light.webp"
+                alt="Flowboard kanban board"
+                width={2880}
+                height={2048}
+                priority
+                className="w-full h-auto dark:hidden"
+              />
+              <Image
+                src="/hero-dark.webp"
+                alt="Flowboard kanban board"
+                width={2880}
+                height={2048}
+                priority
+                className="w-full h-auto hidden dark:block"
+              />
             </motion.div>
           </motion.div>
         </div>
