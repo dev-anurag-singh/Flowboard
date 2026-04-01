@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "motion/react"
-import { ArrowRight, Sparkles } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "motion/react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
       {/* Background glows */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-primary/10 blur-[120px]" />
-        <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/10 blur-[80px]" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 h-48 w-72 rounded-full bg-primary/10 blur-2xl sm:h-80 sm:w-[500px] lg:h-[500px] lg:w-[800px] lg:blur-[120px]" />
+        <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/10 blur-xl lg:blur-[80px]" />
       </div>
 
       <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
@@ -46,8 +46,8 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mt-5 max-w-md text-base text-muted-foreground sm:text-lg"
             >
-              Create boards, add tasks, break them into subtasks, attach notes — and
-              see everything laid out as a visual kanban board.
+              Create boards, add tasks, break them into subtasks, attach notes —
+              and see everything laid out as a visual kanban board.
             </motion.p>
 
             <motion.div
@@ -101,5 +101,5 @@ export function Hero() {
         </div>
       </div>
     </section>
-  )
+  );
 }
