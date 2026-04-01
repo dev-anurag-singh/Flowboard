@@ -151,6 +151,49 @@ Always return consistent JSON shapes:
 
 ---
 
+## Migrating code from the previous repo
+
+When pasting code from the old repo, apply these transformations before using it:
+
+### Font sizes
+
+The old repo had a custom Tailwind `fontSize` config. This repo uses Tailwind defaults. Map old classes to the closest default equivalent — do not use the old class names:
+
+| Old class | Old size | Use instead | Default size |
+|-----------|----------|-------------|--------------|
+| `text-2xl` | 1.5rem | `text-2xl` | 1.5rem (same) |
+| `text-xl` | 1.125rem | `text-lg` | 1.125rem (same) |
+| `text-lg` | 0.9375rem | `text-sm` | 0.875rem (~same) |
+| `text-md` | 0.75rem | `text-xs` | 0.75rem (same) |
+| `text-base` | 0.8125rem | `text-sm` | 0.875rem (~same) |
+| `text-sm` | 0.75rem | `text-xs` | 0.75rem (same) |
+
+Goal is closest visual match, not exact pixel parity.
+
+### Toast notifications
+
+Old repo used `react-hot-toast`. This repo uses **Sonner**. Replace all toast calls:
+
+```ts
+// Old
+import toast from "react-hot-toast"
+toast("Message")
+toast.success("Saved!")
+toast.error("Failed!")
+toast.loading("Loading...")
+toast.dismiss()
+
+// New
+import { toast } from "sonner"
+toast("Message")
+toast.success("Saved!")
+toast.error("Failed!")
+toast.loading("Loading...")
+toast.dismiss()
+```
+
+---
+
 ## Keeping these rules up to date
 
 As we write code, new patterns and conventions will emerge. When that happens:
