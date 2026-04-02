@@ -32,7 +32,9 @@ export const LoginForm = () => {
 
   async function onSubmit({ email, password }: TSignInSchema) {
     setIsPending(true);
-
+    console.log("email", email);
+    console.log("password", password);
+    toast.success("Logged in successfully");
     // const res = await signIn("credentials", {
     //   email,
     //   password,
