@@ -23,6 +23,10 @@ export function LoginForm() {
     formState: { errors },
   } = useForm<TSignInSchema>({
     resolver: zodResolver(SignInSchema),
+    defaultValues: {
+      email: "anurag@example.com",
+      password: "Pass@1234",
+    },
   })
 
   async function onSubmit({ email, password }: TSignInSchema) {
