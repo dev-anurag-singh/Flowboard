@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useTheme } from "next-themes"
-import { motion } from "motion/react"
-import { Sun, Moon } from "lucide-react"
+import { useTheme } from "next-themes";
+import { motion } from "motion/react";
+import { Sun, Moon } from "lucide-react";
 
 type Props = {
-  variant?: "navbar" | "sidebar"
-}
+  variant?: "navbar" | "sidebar";
+};
 
 export function ThemeToggle({ variant = "navbar" }: Props) {
-  const { resolvedTheme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-  }
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
 
   if (variant === "navbar") {
     return (
       <button
         type="button"
         onClick={toggleTheme}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-background/80 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className="inline-flex cursor-pointer h-9 w-9 items-center justify-center rounded-md border border-border bg-background/80 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         aria-label="Toggle theme"
       >
         <Sun className="h-4 w-4 dark:hidden" />
         <Moon className="hidden h-4 w-4 dark:block" />
       </button>
-    )
+    );
   }
 
   return (
@@ -52,5 +52,5 @@ export function ThemeToggle({ variant = "navbar" }: Props) {
         <Moon className="h-4 w-4 text-muted-foreground" />
       </div>
     </div>
-  )
+  );
 }
