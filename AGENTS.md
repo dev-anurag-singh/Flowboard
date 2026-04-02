@@ -168,6 +168,15 @@ The old repo had a custom Tailwind `fontSize` config. This repo overrides `--tex
 | `text-base` | 0.8125rem | `text-sm` | 0.8125rem (exact) |
 | `text-sm` | 0.75rem | `text-xs` | 0.75rem (same) |
 
+### Zod
+
+| Old (v3) | New (v4) |
+|----------|----------|
+| `result.error.errors` | `result.error.issues` |
+| `z.string().email()` | `z.email()` |
+
+---
+
 ### Toast notifications
 
 Old repo used `react-hot-toast`. This repo uses **Sonner**. Replace all toast calls:
