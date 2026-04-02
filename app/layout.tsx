@@ -28,7 +28,7 @@ export default function RootLayout({
       className={cn(font.variable, "h-full")}
       suppressHydrationWarning
     >
-      <body className="min-h-screen subpixel-antialiased overflow-hidden h-full">
+      <body className="min-h-screen subpixel-antialiased h-full">
         <Providers>{children}</Providers>
         <Toaster />
       </body>

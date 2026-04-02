@@ -1,57 +1,51 @@
-"use client";
+"use client"
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-// import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
+import { signIn } from "next-auth/react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { SignInSchema, TSignInSchema } from "@/features/auth/schemas/sign-in"
+import { DEFAULT_LOGIN_REDIRECT } from "@/lib/access-control"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { SignInSchema, TSignInSchema } from "@/features/auth/schemas/sign-in";
-// import { DEFAULT_LOGIN_REDIRECT } from "@/lib/accessControl";
+export function LoginForm() {
+  const [isPending, setIsPending] = useState(false)
+  const router = useRouter()
+  const callbackUrl = useSearchParams().get("callbackUrl")
 
-export const LoginForm = () => {
-  const [isPending, setIsPending] = useState(false);
-  const router = useRouter();
-  const callbackUrl = useSearchParams().get("callbackUrl");
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<TSignInSchema>({
     resolver: zodResolver(SignInSchema),
-    defaultValues: {
-      email: "alex@example.com",
-      password: "Tg@ry745",
-    },
-  });
+  })
 
   async function onSubmit({ email, password }: TSignInSchema) {
-    setIsPending(true);
-    console.log("email", email);
-    console.log("password", password);
-    toast.success("Logged in successfully");
-    // const res = await signIn("credentials", {
-    //   email,
-    //   password,
-    //   redirect: false,
-    // });
+    setIsPending(true)
 
-    // if (!res.error) {
-    //   toast.success("Logged in successfully");
-    //   router.push(callbackUrl || DEFAULT_LOGIN_REDIRECT);
-    // } else {
-    //   if (res.error === "AccessDenied") {
-    //     router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-    //   } else {
-    //     toast.error("Invalid Credentials");
-    //   }
-    // }
-    setIsPending(false);
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (!res?.error) {
+      toast.success("Logged in successfully")
+      router.push(callbackUrl || DEFAULT_LOGIN_REDIRECT)
+    } else {
+      if (res.error === "AccessDenied") {
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`)
+      } else {
+        toast.error("Invalid credentials")
+      }
+    }
+
+    setIsPending(false)
   }
 
   return (
@@ -83,5 +77,5 @@ export const LoginForm = () => {
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}
