@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { SignUpSchema, TSignUpSchema } from "@/features/auth/schemas/sign-up";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { SignUpSchema, TSignUpSchema } from "@/features/auth/schemas/sign-up"
+import { useSignup } from "@/features/auth/hooks/use-signup"
 
 export function SignupForm() {
+  const { signup, isPending } = useSignup()
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<TSignUpSchema>({
     resolver: zodResolver(SignUpSchema),
-  });
+  })
 
-  async function onSubmit({ email, password }: TSignUpSchema) {
-    console.log("email", email);
-    console.log("password", password);
-    toast.success("Signed up successfully");
+  function onSubmit({ email, password }: TSignUpSchema) {
+    signup({ email, password })
   }
 
   return (
@@ -31,6 +31,7 @@ export function SignupForm() {
           <Input
             {...register("email")}
             id="email"
+            disabled={isPending}
             error={errors?.email?.message}
             placeholder="e.g. alex@example.com"
           />
@@ -42,6 +43,7 @@ export function SignupForm() {
             error={errors?.password?.message}
             id="password"
             type="password"
+            disabled={isPending}
             placeholder="At least 8 characters"
           />
         </div>
@@ -52,13 +54,14 @@ export function SignupForm() {
             error={errors?.confirmPassword?.message}
             id="confirmPassword"
             type="password"
+            disabled={isPending}
             placeholder="Repeat your password"
           />
         </div>
-        <Button type="submit" className="mt-2 w-full">
+        <Button type="submit" disabled={isPending} className="mt-2 w-full">
           Create Account
         </Button>
       </div>
     </form>
-  );
+  )
 }

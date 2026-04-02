@@ -1,0 +1,34 @@
+"use client"
+
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import type { TSignUpSchema } from "@/features/auth/schemas/sign-up"
+
+export function useSignup() {
+  const router = useRouter()
+
+  const { mutate: signup, isPending } = useMutation({
+    mutationFn: async (data: Omit<TSignUpSchema, "confirmPassword">) => {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const { error } = await res.json()
+        throw new Error(error)
+      }
+
+      return data.email
+    },
+    onSuccess: (email) => {
+      toast.success("We've sent a verification link to your email.")
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`)
+    },
+    onError: (err) => toast.error(err.message),
+  })
+
+  return { signup, isPending }
+}
