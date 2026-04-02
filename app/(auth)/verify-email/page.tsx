@@ -1,5 +1,10 @@
-import { VerifyEmailCard } from "@/features/auth";
+import { Suspense } from "react"
+import { VerifyEmailCard } from "@/features/auth"
 
 export default function VerifyEmailPage() {
-  return <VerifyEmailCard />;
+  return (
+    <Suspense>
+      <VerifyEmailCard />
+    </Suspense>
+  )
 }

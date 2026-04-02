@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -10,19 +11,27 @@ import {
 } from "@/components/ui/card"
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export function VerifyEmailCard() {
   const router = useRouter()
+  const email = useSearchParams().get("email")
+  const [isPending, setIsPending] = useState(false)
 
   const handleResendEmail = async () => {
-    // TODO: Add a api call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    toast("We've sent a new verification email to your inbox.")
-  }
-
-  const handleBackToLogin = () => {
-    router.replace("/login")
+    setIsPending(true)
+    try {
+      await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      toast.success("Verification email sent!")
+    } catch {
+      toast.error("Something went wrong. Please try again.")
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -57,12 +66,12 @@ export function VerifyEmailCard() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button onClick={handleResendEmail} className="w-full">
+          <Button onClick={handleResendEmail} disabled={isPending} className="w-full">
             <Mail className="mr-2 h-4 w-4" />
             Resend verification email
           </Button>
 
-          <Button variant="outline" onClick={handleBackToLogin} className="w-full">
+          <Button variant="outline" onClick={() => router.replace("/login")} className="w-full">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to login
           </Button>
