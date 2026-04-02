@@ -10,17 +10,20 @@ import {
 import Link from "next/link";
 import { GoogleLoginButton } from "@/features/auth";
 import { Separator } from "@/components/ui/separator";
+import { LoginForm } from "@/features/auth";
 // import { LoginForm } from "@/components/auth/login/LoginForm";
 
 function LoginPage() {
   return (
     <>
       <Card className="border-0 py-4">
-        <CardHeader className="space-y-2 text-center">
+        <CardHeader className="gap-2 text-center">
           <CardTitle>Welcome back</CardTitle>
           <CardDescription>Enter your credentails to get back!</CardDescription>
         </CardHeader>
-        <CardContent>{/* <LoginForm /> */}</CardContent>
+        <CardContent>
+          <LoginForm />
+        </CardContent>
         <CardFooter className="flex-col">
           <div className="relative mb-8 w-full">
             <Separator />
@@ -29,13 +32,13 @@ function LoginPage() {
             </span>
           </div>
           <GoogleLoginButton />
-          <div className="mt-4 text-center text-base">
+          <div className="mt-4 text-center text-sm font-medium">
             <span>Don&apos; have an account?</span>
             <Button
               asChild
               variant="link"
               size="sm"
-              className="h-auto px-2 text-lg"
+              className="h-auto px-2 text-[15px]"
             >
               <Link href="/signup">Signup</Link>
             </Button>

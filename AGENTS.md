@@ -157,18 +157,16 @@ When pasting code from the old repo, apply these transformations before using it
 
 ### Font sizes
 
-The old repo had a custom Tailwind `fontSize` config. This repo uses Tailwind defaults. Map old classes to the closest default equivalent — do not use the old class names:
+The old repo had a custom Tailwind `fontSize` config. This repo overrides `--text-sm` to `0.8125rem` (13px) in `globals.css` — so `text-sm` is the base body size. Map old classes as follows:
 
-| Old class | Old size | Use instead | Default size |
-|-----------|----------|-------------|--------------|
+| Old class | Old size | Use instead | This repo's size |
+|-----------|----------|-------------|-----------------|
 | `text-2xl` | 1.5rem | `text-2xl` | 1.5rem (same) |
 | `text-xl` | 1.125rem | `text-lg` | 1.125rem (same) |
-| `text-lg` | 0.9375rem | `text-sm` | 0.875rem (~same) |
+| `text-lg` | 0.9375rem | `text-sm` | 0.8125rem (~same) |
 | `text-md` | 0.75rem | `text-xs` | 0.75rem (same) |
-| `text-base` | 0.8125rem | `text-sm` | 0.875rem (~same) |
+| `text-base` | 0.8125rem | `text-sm` | 0.8125rem (exact) |
 | `text-sm` | 0.75rem | `text-xs` | 0.75rem (same) |
-
-Goal is closest visual match, not exact pixel parity.
 
 ### Toast notifications
 

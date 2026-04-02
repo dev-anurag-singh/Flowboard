@@ -15,7 +15,7 @@ export const GoogleLoginButton = () => {
   };
   return (
     <Button onClick={onClick} variant="outline" className="w-full">
-      <FcGoogle size={20} />
+      <FcGoogle size={20} className="size-5!" />
       Google
     </Button>
   );

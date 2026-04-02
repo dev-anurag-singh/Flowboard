@@ -9,6 +9,7 @@ const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default function RootLayout({
       className={cn(font.variable, "h-full")}
       suppressHydrationWarning
     >
-      <body className="min-h-screen antialiased h-full">
+      <body className="min-h-screen subpixel-antialiased h-full">
         <Providers>{children}</Providers>
         <Toaster />
       </body>
