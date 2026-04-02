@@ -27,14 +27,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async linkAccount({ user }) {
       await db
         .update(users)
-        .set({ emailVerified: new Date() })
+        .set({
+          emailVerified: new Date(),
+          name: user.name,
+          image: user.image,
+        })
         .where(eq(users.id, user.id!))
     },
   },
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider !== "credentials") return true
-      if (!user.emailVerified) return false
+if (!user.emailVerified) return false
       return true
     },
     async session({ token, session }) {
@@ -43,7 +47,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
   },
   providers: [
-    Google,
+    Google({ allowDangerousEmailAccountLinking: true }),
     Credentials({
       async authorize(credentials) {
         const result = SignInSchema.safeParse(credentials)
