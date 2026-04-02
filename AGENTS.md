@@ -192,6 +192,14 @@ toast.dismiss()
 
 ---
 
+## Commits
+
+- Format: `feat: short message` — no scope, no body, no co-author line
+- Separate commits by concern — never bundle unrelated changes in one commit
+- Read `git status` and `git diff` before committing to group changes logically
+
+---
+
 ## Keeping these rules up to date
 
 As we write code, new patterns and conventions will emerge. When that happens:
