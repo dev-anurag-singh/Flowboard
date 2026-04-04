@@ -1,7 +1,9 @@
+import { LogoLoader } from "@/components/logo-loader";
+
 export default function Loading() {
   return (
-    <div className="flex h-full items-center justify-center">
-      <p className="text-sm text-muted-foreground">Loading...</p>
+    <div className="grid h-full place-content-center">
+      <LogoLoader />
     </div>
   );
 }

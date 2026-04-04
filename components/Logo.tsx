@@ -25,7 +25,7 @@ export function LogoSmall() {
   );
 }
 
-export function LogoLarge() {
+export function LogoLarge(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -33,6 +33,7 @@ export function LogoLarge() {
       height="100"
       viewBox="0 0 100 100"
       fill="none"
+      {...props}
     >
       <rect width="25" height="100" rx="2" fill="#635FC7" />
       <rect
