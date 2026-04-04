@@ -2,11 +2,11 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { eq } from "drizzle-orm"
 import { compare } from "@node-rs/bcrypt"
 import { db } from "@/lib/db"
 import { users, accounts } from "@/lib/db/schema"
 import { SignInSchema } from "@/features/auth/schemas/sign-in"
+import { getUserByEmail, updateUserFromOAuth } from "@/services/users"
 
 declare module "next-auth" {
   interface User {
@@ -25,20 +25,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   },
   events: {
     async linkAccount({ user }) {
-      await db
-        .update(users)
-        .set({
-          emailVerified: new Date(),
-          name: user.name,
-          image: user.image,
-        })
-        .where(eq(users.id, user.id!))
+      await updateUserFromOAuth(user.id!, {
+        name: user.name,
+        image: user.image,
+      })
     },
   },
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider !== "credentials") return true
-if (!user.emailVerified) return false
+      if (!user.emailVerified) return false
       return true
     },
     async session({ token, session }) {
@@ -55,10 +51,7 @@ if (!user.emailVerified) return false
 
         const { email, password } = result.data
 
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
+        const user = await getUserByEmail(email)
 
         if (!user?.password) return null
 

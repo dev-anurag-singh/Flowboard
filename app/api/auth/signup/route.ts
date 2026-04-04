@@ -1,10 +1,8 @@
 import { hash } from "@node-rs/bcrypt"
 import { NextResponse } from "next/server"
-import { eq } from "drizzle-orm"
-import { db } from "@/lib/db"
-import { users } from "@/lib/db/schema"
 import { SignUpApiSchema } from "@/features/auth/schemas/sign-up"
-import { generateVerificationToken } from "@/utils/tokens"
+import { createVerificationToken } from "@/services/tokens"
+import { getUserByEmail, createUser } from "@/services/users"
 import { sendVerificationEmail } from "@/utils/mail"
 
 export async function POST(req: Request) {
@@ -21,10 +19,7 @@ export async function POST(req: Request) {
 
     const { email, password } = result.data
 
-    const [existingUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
+    const existingUser = await getUserByEmail(email)
 
     if (existingUser) {
       return NextResponse.json(
@@ -34,9 +29,11 @@ export async function POST(req: Request) {
     }
 
     const hashedPassword = await hash(password, 10)
-    await db.insert(users).values({ email, password: hashedPassword })
+    await createUser(email, hashedPassword)
 
-    const verificationToken = await generateVerificationToken(email)
+    const token = crypto.randomUUID()
+    const expires = new Date(Date.now() + 3600 * 1000)
+    const verificationToken = await createVerificationToken(email, token, expires)
     await sendVerificationEmail(verificationToken.email, verificationToken.token)
 
     return NextResponse.json({ data: "Confirmation email sent!" })

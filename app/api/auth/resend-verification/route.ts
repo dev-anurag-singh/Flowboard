@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { users } from "@/lib/db/schema"
-import { getVerificationToken, generateVerificationToken } from "@/utils/tokens"
+import { getVerificationToken, createVerificationToken } from "@/services/tokens"
+import { getUserByEmail } from "@/services/users"
 import { sendVerificationEmail } from "@/utils/mail"
 
 const GENERIC_RESPONSE = NextResponse.json({ data: "Verification email sent!" })
@@ -13,7 +11,7 @@ export async function POST(req: Request) {
 
     if (!email) return GENERIC_RESPONSE
 
-    const [user] = await db.select().from(users).where(eq(users.email, email))
+    const user = await getUserByEmail(email)
 
     if (!user || user.emailVerified) return GENERIC_RESPONSE
 
@@ -21,8 +19,10 @@ export async function POST(req: Request) {
     const existing = await getVerificationToken(email)
     if (existing && existing.expires > new Date()) return GENERIC_RESPONSE
 
-    const token = await generateVerificationToken(email)
-    await sendVerificationEmail(token.email, token.token)
+    const token = crypto.randomUUID()
+    const expires = new Date(Date.now() + 3600 * 1000)
+    const verificationToken = await createVerificationToken(email, token, expires)
+    await sendVerificationEmail(verificationToken.email, verificationToken.token)
 
     return GENERIC_RESPONSE
   } catch {
