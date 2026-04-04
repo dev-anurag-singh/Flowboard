@@ -2,6 +2,7 @@ import {
   pgTable,
   text,
   integer,
+  boolean,
   timestamp,
   primaryKey,
   uniqueIndex,
@@ -62,6 +63,7 @@ export const boards = pgTable("boards", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   order: integer("order").notNull(),
+  isDefault: boolean("is_default").notNull().default(false),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" })
     .defaultNow()
