@@ -14,7 +14,7 @@ This is **Next.js 16.2.1** — APIs, conventions, and defaults differ significan
 - **Tailwind CSS v4** — no `tailwind.config.js`, config via `@theme` in CSS
 - **Turbopack** (default, no `--turbopack` flag needed)
 - **shadcn/ui** — components installed to `components/ui/`
-- **Drizzle or Prisma** (TBD — update when decided)
+- **Drizzle ORM** with Neon (serverless Postgres)
 
 ---
 
@@ -25,9 +25,9 @@ This is **Next.js 16.2.1** — APIs, conventions, and defaults differ significan
 ```
 flowboard/
 ├── app/                        # Routing + API routes ONLY
-│   ├── api/                    # API route handlers (route.ts files)
+│   ├── api/                    # API route handlers (route.ts files) — thin HTTP adapters
 │   ├── (auth)/                 # Auth route group
-│   ├── (dashboard)/            # Dashboard route group
+│   ├── (main)/                 # Main app route group
 │   ├── layout.tsx
 │   ├── page.tsx
 │   └── globals.css
@@ -36,24 +36,26 @@ flowboard/
 │   └── [feature]/
 │       ├── components/         # Feature-specific components
 │       ├── hooks/              # Feature-specific hooks
-│       ├── types.ts
+│       ├── schemas/            # Zod schemas
+│       ├── queries.ts          # React Query options (queryOptions())
 │       └── index.ts            # Barrel export
+│
+├── services/                   # Server-side DB functions, one file per entity
+│   ├── boards.ts               # e.g. getBoardsForUser, createBoard
+│   ├── users.ts
+│   └── tokens.ts
 │
 ├── components/
 │   └── ui/                     # shadcn components (auto-installed here)
-│       └── index.ts
 │
 ├── hooks/                      # Shared hooks (used across features)
-│   └── index.ts
-│
-├── utils/                      # Shared utility functions
-│   └── index.ts
-│
-├── lib/                        # DB client, API client, config
-│   └── index.ts
+├── utils/                      # Shared utility functions (non-DB)
+├── lib/                        # DB client + schema only
+│   └── db/
+│       ├── index.ts
+│       └── schema.ts
 │
 └── types/                      # Global TypeScript types
-    └── index.ts
 ```
 
 ### Import conventions — always `@/` aliases, never relative `../../`
@@ -67,12 +69,17 @@ import { db } from '@/lib'
 
 ### Structure rules
 
-- `app/` pages are thin — import from `features/` and render, nothing more
+- `app/` pages and API routes are thin — import from `features/` or `services/` and delegate, nothing more
+- API routes are HTTP adapters only — no inline DB queries, call `services/` functions
 - Feature-specific code stays inside its `features/[feature]/` — not imported by other features directly
 - Shared code (used by 2+ features) goes into `components/`, `hooks/`, `utils/`, or `lib/`
-- Every folder imported externally MUST have an `index.ts` barrel export
 - shadcn components install to `components/ui/` — do not move them
-- DB client lives in `lib/db.ts`, exported from `lib/index.ts`
+- DB client and schema live in `lib/db/` only — no query logic there
+- All DB query functions live in `services/` — one file per entity, used by both API routes and server components directly
+- Never define inline DB queries in API routes or layouts — always go through `services/`
+- `services/` functions interact with the DB only — no side effects, no external calls, no pure computation (e.g. no `crypto.randomUUID()`, no date math, no email sending). Orchestrating multiple DB operations or transactions is fine.
+- Non-DB logic (token generation, expiry calculation, etc.) belongs in the caller (route or server action)
+- Drizzle infers types from schema — never create a separate `types.ts` just to re-export `InferSelectModel`
 
 ---
 
@@ -125,6 +132,46 @@ Always return consistent JSON shapes:
 // Error
 { error: string }
 ```
+
+## Data Fetching
+
+### Server → Client flow
+
+1. **Server component (layout/page)** calls `services/` directly and uses `queryClient.setQueryData()` to populate the React Query cache
+2. **`HydrationBoundary`** passes the dehydrated cache to the client
+3. **Client component** calls `useQuery(entityQueryOptions)` — data is already in cache, no loading state
+
+```ts
+// layout.tsx (server)
+const boards = await getBoardsForUser(session.user.id)
+queryClient.setQueryData(boardsQueryOptions.queryKey, boards)
+
+// component (client)
+const { data: boards = [] } = useQuery(boardsQueryOptions)
+```
+
+### Query options
+
+Define query options with `queryOptions()` from TanStack Query in `features/[feature]/queries.ts`. The `queryFn` calls the API route (used for client-side refetches):
+
+```ts
+export const boardsQueryOptions = queryOptions<Board[]>({
+  queryKey: ["boards"],
+  queryFn: async () => {
+    const res = await fetch("/api/boards")
+    if (!res.ok) throw new Error("Failed to fetch boards")
+    const json = await res.json()
+    return json.data
+  },
+})
+```
+
+### QueryClient setup
+
+- `lib/query-client.ts` — server-side `getQueryClient` using React `cache()`, includes `shouldDehydrateQuery` and `shouldRedactErrors` config
+- `app/query-provider.tsx` — client `QueryClientProvider`, imports from `lib/query-client.ts`
+
+---
 
 ## Environment Variables
 
