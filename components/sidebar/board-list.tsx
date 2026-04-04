@@ -7,37 +7,17 @@ import { BoardIcon } from "@/icons/board-icon";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import { useSuspenseQuery } from "@tanstack/react-query";
-// import { boardOptions } from "@/services/boards";
-// import { useCreateBoardState } from "@/store/board";
-
-type Board = { id: string; name: string };
-
-const DUMMY_BOARDS: Board[] = [
-  { id: "1", name: "Platform Launch" },
-  { id: "2", name: "Marketing Plan" },
-  { id: "3", name: "Roadmap" },
-  { id: "4", name: "Product Backlog" },
-  { id: "5", name: "Design System" },
-  { id: "6", name: "Engineering" },
-  { id: "7", name: "Customer Research" },
-  { id: "8", name: "OKRs Q1 2026" },
-  { id: "9", name: "Bug Tracker" },
-  { id: "10", name: "Onboarding Flow" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { boardsQueryOptions } from "@/features/boards/queries";
 
 export function BoardList() {
-  // const { data: boards } = useSuspenseQuery(boardOptions);
-  // const { open } = useCreateBoardState();
-  const boards = DUMMY_BOARDS;
-
+  const { data: boards = [] } = useQuery(boardsQueryOptions);
   const pathname = usePathname();
-  const boardsCount = boards.length || 0;
 
   return (
     <>
       <h4 className="ml-6 text-xs font-bold uppercase lg:ml-8">
-        All Boards ({boardsCount})
+        All Boards ({boards.length})
       </h4>
       <ScrollArea className="min-h-48 basis-full">
         <div className="mb-auto">
@@ -62,7 +42,6 @@ export function BoardList() {
             </Link>
           ))}
           <div className="px-6 lg:px-8">
-            {/* <Button onClick={open} variant="link" className="gap-3 p-0"> */}
             <Button variant="link" className="gap-3 p-0">
               <BoardIcon />
               <div className="inline-flex items-center gap-0.5">
