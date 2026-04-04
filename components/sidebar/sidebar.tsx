@@ -11,11 +11,9 @@ import { BoardList } from "@/components/sidebar/board-list";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { IconEye } from "@/icons/icon-eye";
 
-function SidebarContent() {
-  const { close } = useSidebarStore();
-
+function SidebarContent({ onClose }: { onClose: () => void }) {
   return (
-    <div className="flex h-full w-(--sidebar-width) flex-col gap-5">
+    <div className="flex h-full flex-col gap-5">
       <div className="p-6 pt-0 lg:px-8">
         <Link href="/dashboard" className="inline-flex items-center">
           <LogoSmall />
@@ -30,7 +28,7 @@ function SidebarContent() {
       <ThemeToggle variant="sidebar" />
 
       <button
-        onClick={close}
+        onClick={onClose}
         className="relative z-10 mr-5 flex items-center gap-4 rounded-r-full px-6 py-4 text-[15px] font-bold transition-colors after:absolute after:left-0 after:top-0 after:-z-10 after:h-full after:w-0 after:rounded-r-full after:bg-secondary after:transition-all after:duration-300 hover:text-secondary-foreground hover:after:w-full lg:mr-6 lg:px-8"
       >
         <IconEye />
@@ -41,7 +39,7 @@ function SidebarContent() {
 }
 
 export function Sidebar() {
-  const { isOpen, isSheetOpen, closeSheet } = useSidebarStore();
+  const { isOpen, close, isSheetOpen, closeSheet } = useSidebarStore();
   const isClient = useIsClient();
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -63,7 +61,7 @@ export function Sidebar() {
         transition={{ duration: 0.5 }}
         className="hidden shrink-0 basis-(--sidebar-width) flex-col gap-5 overflow-hidden border-r bg-muted py-8 text-muted-foreground md:flex"
       >
-        <SidebarContent />
+        <SidebarContent onClose={close} />
       </motion.div>
     );
   }
@@ -73,10 +71,10 @@ export function Sidebar() {
       <Sheet open={isSheetOpen} onOpenChange={open => !open && closeSheet()}>
         <SheetContent
           side="left"
-          className="w-full! max-w-[400px] bg-muted p-0 pt-8"
+          className="w-full! max-w-[400px] bg-muted py-6 pb-4"
         >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <SidebarContent />
+          <SidebarContent onClose={closeSheet} />
         </SheetContent>
       </Sheet>
     );
@@ -90,7 +88,7 @@ export function Sidebar() {
       transition={{ duration: 0.5 }}
       className="flex shrink-0 basis-(--sidebar-width) flex-col gap-5 overflow-hidden border-r bg-muted py-8 text-muted-foreground"
     >
-      <SidebarContent />
+      <SidebarContent onClose={close} />
     </motion.div>
   );
 }
