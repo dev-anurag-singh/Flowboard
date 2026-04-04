@@ -159,14 +159,14 @@ When pasting code from the old repo, apply these transformations before using it
 
 The old repo had a custom Tailwind `fontSize` config. This repo overrides `--text-sm` to `0.8125rem` (13px) in `globals.css` — so `text-sm` is the base body size. Map old classes as follows:
 
-| Old class | Old size | Use instead | This repo's size |
-|-----------|----------|-------------|-----------------|
-| `text-2xl` | 1.5rem | `text-2xl` | 1.5rem (same) |
-| `text-xl` | 1.125rem | `text-lg` | 1.125rem (same) |
-| `text-lg` | 0.9375rem | `text-sm` | 0.8125rem (~same) |
-| `text-md` | 0.75rem | `text-xs` | 0.75rem (same) |
-| `text-base` | 0.8125rem | `text-sm` | 0.8125rem (exact) |
-| `text-sm` | 0.75rem | `text-xs` | 0.75rem (same) |
+| Old class | Old size | Use instead | This repo's size | Font weight |
+|-----------|----------|-------------|-----------------|-------------|
+| `text-2xl` | 1.5rem | `text-2xl` | 1.5rem (same) | `font-bold` |
+| `text-xl` | 1.125rem | `text-lg` | 1.125rem (same) | `font-bold` |
+| `text-lg` | 0.9375rem (15px) | `text-[15px]` | 15px (exact) | `font-bold` |
+| `text-md` | 0.75rem | `text-xs` | 0.75rem (same) | `font-bold` |
+| `text-base` | 0.8125rem | `text-sm` | 0.8125rem (exact) | `font-medium` |
+| `text-sm` | 0.75rem | `text-xs` | 0.75rem (same) | `font-bold` |
 
 ### Zod
 

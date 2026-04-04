@@ -1,3 +1,13 @@
+"use client";
+
+import { useSidebarStore } from "@/store/sidebar";
+
 export default function DashboardPage() {
-  return <div></div>;
+  const { openSheet } = useSidebarStore();
+
+  return (
+    <div>
+      <button onClick={openSheet}>Open Sidebar</button>
+    </div>
+  );
 }

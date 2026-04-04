@@ -3,6 +3,8 @@
 import { useTheme } from "next-themes";
 import { motion } from "motion/react";
 import { Sun, Moon } from "lucide-react";
+import { IconSun } from "@/icons/icon-sun";
+import { IconMoon } from "@/icons/icon-moon";
 
 type Props = {
   variant?: "navbar" | "sidebar";
@@ -30,9 +32,9 @@ export function ThemeToggle({ variant = "navbar" }: Props) {
   }
 
   return (
-    <div className="grid h-12 place-content-center rounded-md bg-background px-4">
+    <div className="mx-3 grid place-content-center rounded-md bg-background py-4 lg:mx-6">
       <div className="flex items-center gap-6">
-        <Sun className="h-4 w-4 text-muted-foreground" />
+        <IconSun />
         <button
           type="button"
           onClick={toggleTheme}
@@ -49,7 +51,7 @@ export function ThemeToggle({ variant = "navbar" }: Props) {
             className="h-[14px] w-[14px] rounded-full bg-white"
           />
         </button>
-        <Moon className="h-4 w-4 text-muted-foreground" />
+        <IconMoon />
       </div>
     </div>
   );

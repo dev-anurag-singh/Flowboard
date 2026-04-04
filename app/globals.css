@@ -91,6 +91,12 @@
   --sidebar-width: 16rem;
 }
 
+@media (min-width: 64rem) {
+  :root {
+    --sidebar-width: 20rem;
+  }
+}
+
 .dark {
   --background: hsl(235 16% 15%);
   --foreground: hsl(0 0% 100%);

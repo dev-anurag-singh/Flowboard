@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LogoFull } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./theme-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const navLinks = [
   { label: "Features", href: "#features" },
