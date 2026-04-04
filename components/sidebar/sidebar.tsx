@@ -17,7 +17,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
       <div className="p-6 pt-0 lg:px-8">
         <Link href="/dashboard" className="inline-flex items-center">
           <LogoSmall />
-          <span className="ml-4 text-2xl leading-none text-foreground">
+          <span className="ml-4 text-2xl font-bold leading-none text-foreground">
             Flowboard
           </span>
         </Link>
