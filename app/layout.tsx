@@ -13,8 +13,13 @@ const font = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Flowboard",
-  description: "Organize your work, your way.",
+  title: {
+    template: "%s | Flowboard",
+    default: "Flowboard",
+  },
+  description:
+    "Flowboard is a task management tool that helps you manage your tasks and projects.",
+  icons: "/icon.png",
 };
 
 export default function RootLayout({
