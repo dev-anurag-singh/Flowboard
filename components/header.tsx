@@ -13,7 +13,7 @@ export function Header() {
   const { data: boards = [] } = useQuery(boardsQueryOptions);
 
   const pathname = usePathname();
-  const currentBoard = boardId ? boards.find((b) => b.id === boardId) : null;
+  const currentBoard = boardId ? boards.find(b => b.id === boardId) : null;
   const title =
     currentBoard?.name ?? (pathname === "/dashboard" ? "Dashboard" : null);
 
@@ -26,7 +26,7 @@ export function Header() {
             {/* Mobile: sidebar trigger + title */}
             <button
               onClick={openSheet}
-              className="mr-3 text-muted-foreground transition-colors hover:text-foreground md:hidden"
+              className="mr-3 cursor-pointer text-muted-foreground transition-colors hover:text-foreground md:hidden"
               aria-label="Open sidebar"
             >
               <PanelLeft size={24} />

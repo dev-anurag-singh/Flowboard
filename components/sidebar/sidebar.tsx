@@ -71,7 +71,7 @@ export function Sidebar() {
       <Sheet open={isSheetOpen} onOpenChange={open => !open && closeSheet()}>
         <SheetContent
           side="left"
-          className="w-full! max-w-[400px] bg-muted py-6 pb-4"
+          className="w-full! max-w-[400px] bg-muted py-6 pb-4 text-muted-foreground"
         >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SidebarContent onClose={closeSheet} />
