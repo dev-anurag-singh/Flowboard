@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +15,7 @@ import { SignupForm } from "@/features/auth";
 
 function SignupPage() {
   return (
-    <>
+    <Suspense>
       <Card className="border-0 md:py-4">
         <CardHeader className="gap-2 text-center">
           <CardTitle>Create account</CardTitle>
@@ -46,7 +47,7 @@ function SignupPage() {
           </div>
         </CardFooter>
       </Card>
-    </>
+    </Suspense>
   );
 }
 

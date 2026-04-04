@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +15,7 @@ import { LoginForm } from "@/features/auth";
 
 function LoginPage() {
   return (
-    <>
+    <Suspense>
       <Card className="border-0 py-4">
         <CardHeader className="gap-2 text-center">
           <CardTitle>Welcome back</CardTitle>
@@ -44,7 +45,7 @@ function LoginPage() {
           </div>
         </CardFooter>
       </Card>
-    </>
+    </Suspense>
   );
 }
 
