@@ -31,7 +31,7 @@ export function Header() {
             >
               <PanelLeft size={24} />
             </button>
-            <h1 className="max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-bold text-foreground md:max-w-48 lg:max-w-xs lg:text-lg">
+            <h1 className="max-w-[180px] capitalize overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-bold text-foreground md:max-w-48 lg:max-w-xs lg:text-lg">
               {title}
             </h1>
           </>
