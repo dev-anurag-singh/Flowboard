@@ -12,7 +12,7 @@ export default async function Page() {
   const session = await auth()
 
   return (
-    <>
+    <div className="h-full overflow-y-auto">
       <Navbar isLoggedIn={!!session} />
       <main>
         <Hero />
@@ -21,6 +21,6 @@ export default async function Page() {
         <CtaBanner />
       </main>
       <Footer />
-    </>
+    </div>
   )
 }
