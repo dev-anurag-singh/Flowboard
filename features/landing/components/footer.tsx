@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { LogoFull } from "@/components/Logo"
+import Link from "next/link";
+import { LogoFull } from "@/components/Logo";
 
 export function Footer() {
   return (
@@ -13,16 +13,28 @@ export function Footer() {
 
           {/* Links */}
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition-colors">
+            <a
+              href="#features"
+              className="hover:text-foreground transition-colors"
+            >
               Features
             </a>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">
+            <a
+              href="#how-it-works"
+              className="hover:text-foreground transition-colors"
+            >
               How it works
             </a>
-            <Link href="/login" className="hover:text-foreground transition-colors">
+            <Link
+              href="/login"
+              className="hover:text-foreground transition-colors"
+            >
               Sign in
             </Link>
-            <Link href="/register" className="hover:text-foreground transition-colors">
+            <Link
+              href="/signup"
+              className="hover:text-foreground transition-colors"
+            >
               Get started
             </Link>
           </div>
@@ -34,5 +46,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

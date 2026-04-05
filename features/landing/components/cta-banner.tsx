@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "motion/react"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function CtaBanner() {
   return (
@@ -29,12 +29,8 @@ export function CtaBanner() {
             It&apos;s free to get started.
           </p>
           <div className="relative mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Button
-              size="lg"
-              variant="secondary"
-              asChild
-            >
-              <Link href="/register">
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/signup">
                 Start for free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
@@ -43,5 +39,5 @@ export function CtaBanner() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
