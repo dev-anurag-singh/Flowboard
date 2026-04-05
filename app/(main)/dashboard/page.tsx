@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, ListTodo, ArrowRight, Plus } from "lucide-react";
+import { CreateBoardModal } from "@/features/boards/components/create-board-modal";
 import { BoardIcon } from "@/icons/board-icon";
 
 // ─── Placeholder data — replace with real service calls when ready ────────────
@@ -102,10 +103,12 @@ export default async function DashboardPage() {
           <h2 className="text-[15px] font-bold text-foreground">
             Recent Boards
           </h2>
-          <Button size="sm" className="gap-1.5">
-            <Plus size={14} />
-            New Board
-          </Button>
+          <CreateBoardModal>
+            <Button size="sm" className="gap-1.5">
+              <Plus size={14} />
+              New Board
+            </Button>
+          </CreateBoardModal>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -132,10 +135,12 @@ export default async function DashboardPage() {
           ))}
 
           {/* Add new board card */}
-          <button className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/20 p-5 text-sm font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">
-            <BoardIcon className="opacity-60" />
-            Add New Board
-          </button>
+          <CreateBoardModal>
+            <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/20 p-5 text-sm font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">
+              <BoardIcon className="opacity-60" />
+              Add New Board
+            </button>
+          </CreateBoardModal>
         </div>
       </section>
     </div>
