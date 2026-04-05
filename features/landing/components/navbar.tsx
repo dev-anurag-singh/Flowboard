@@ -12,7 +12,7 @@ const navLinks = [
   { label: "How it works", href: "#how-it-works" },
 ];
 
-export function Navbar() {
+export function Navbar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -49,12 +49,20 @@ export function Navbar() {
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle variant="navbar" />
-            <Button variant="ghost" asChild className="hidden md:inline-flex">
-              <Link href="/login">Sign in</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/register">Get started</Link>
-            </Button>
+            {isLoggedIn ? (
+              <Button asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild className="hidden md:inline-flex">
+                  <Link href="/login">Sign in</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/signup">Get started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>

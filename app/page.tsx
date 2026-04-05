@@ -1,3 +1,4 @@
+import { auth } from "@/auth"
 import {
   Navbar,
   Hero,
@@ -7,10 +8,12 @@ import {
   Footer,
 } from "@/features/landing"
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth()
+
   return (
     <>
-      <Navbar />
+      <Navbar isLoggedIn={!!session} />
       <main>
         <Hero />
         <FeaturesSection />
