@@ -4,11 +4,10 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BoardIcon } from "@/icons/board-icon";
-import { PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { boardsQueryOptions } from "@/features/boards/queries";
+import { CreateBoardModal } from "@/features/boards/components/create-board-modal";
 
 export function BoardList() {
   const { data: boards = [] } = useQuery(boardsQueryOptions);
@@ -42,13 +41,7 @@ export function BoardList() {
             </Link>
           ))}
           <div className="px-6 lg:px-8">
-            <Button variant="link" className="gap-3 p-0">
-              <BoardIcon />
-              <div className="inline-flex items-center gap-0.5">
-                <PlusIcon size={16} className="mt-px" />
-                <span className="text-[15px] font-bold">Add New Board</span>
-              </div>
-            </Button>
+            <CreateBoardModal />
           </div>
         </div>
       </ScrollArea>
