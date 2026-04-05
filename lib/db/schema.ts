@@ -8,6 +8,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm"
 import type { AdapterAccountType } from "next-auth/adapters"
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
@@ -108,3 +109,20 @@ export const tasks = pgTable("tasks", {
     .notNull()
     .$onUpdateFn(() => new Date()),
 })
+
+// ─── Relations ───────────────────────────────────────────────────────────────
+
+export const boardsRelations = relations(boards, ({ many }) => ({
+  columns: many(columns),
+  tasks: many(tasks),
+}))
+
+export const columnsRelations = relations(columns, ({ one, many }) => ({
+  board: one(boards, { fields: [columns.boardId], references: [boards.id] }),
+  tasks: many(tasks),
+}))
+
+export const tasksRelations = relations(tasks, ({ one }) => ({
+  board: one(boards, { fields: [tasks.boardId], references: [boards.id] }),
+  column: one(columns, { fields: [tasks.columnId], references: [columns.id] }),
+}))

@@ -1,6 +1,6 @@
-import { desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { boards, columns } from "@/lib/db/schema";
+import { boards, columns, tasks } from "@/lib/db/schema";
 
 export async function getBoardsForUser(userId: string) {
   return db
@@ -8,6 +8,24 @@ export async function getBoardsForUser(userId: string) {
     .from(boards)
     .where(eq(boards.userId, userId))
     .orderBy(boards.order);
+}
+
+export async function getBoardById(userId: string, boardId: string) {
+  const board = await db.query.boards.findFirst({
+    where: and(eq(boards.id, boardId), eq(boards.userId, userId)),
+    with: {
+      columns: {
+        orderBy: asc(columns.order),
+        with: {
+          tasks: {
+            orderBy: asc(tasks.order),
+          },
+        },
+      },
+    },
+  });
+
+  return board ?? null;
 }
 
 export async function createBoard(
