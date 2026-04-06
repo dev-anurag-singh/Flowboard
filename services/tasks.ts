@@ -1,0 +1,58 @@
+import { and, desc, eq, isNull } from "drizzle-orm";
+import { db } from "@/lib/db";
+import { tasks } from "@/lib/db/schema";
+
+export async function createTask(
+  userId: string,
+  data: {
+    title: string;
+    description?: string;
+    columnId: string;
+    boardId: string;
+    subtasks?: { title: string }[];
+  },
+) {
+  const [lastTask] = await db
+    .select({ order: tasks.order })
+    .from(tasks)
+    .where(
+      and(
+        eq(tasks.columnId, data.columnId),
+        eq(tasks.userId, userId),
+        isNull(tasks.parentId),
+      ),
+    )
+    .orderBy(desc(tasks.order))
+    .limit(1);
+
+  const newOrder = lastTask ? lastTask.order + 1 : 0;
+
+  return db.transaction(async (tx) => {
+    const [task] = await tx
+      .insert(tasks)
+      .values({
+        title: data.title,
+        description: data.description,
+        columnId: data.columnId,
+        boardId: data.boardId,
+        userId,
+        order: newOrder,
+      })
+      .returning();
+
+    if (data.subtasks && data.subtasks.length > 0) {
+      await tx.insert(tasks).values(
+        data.subtasks.map((s, idx) => ({
+          title: s.title,
+          columnId: data.columnId,
+          boardId: data.boardId,
+          userId,
+          parentId: task.id,
+          order: idx,
+        })),
+      );
+    }
+
+    return task;
+  });
+}
