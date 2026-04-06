@@ -4,6 +4,7 @@ import { getQueryClient } from "@/lib/query-client";
 import { boardsQueryOptions } from "@/features/boards/queries";
 import { getBoardsForUser } from "@/services/boards";
 import { Sidebar } from "@/components/sidebar/sidebar";
+import { SidebarTrigger } from "@/components/sidebar/sidebar-trigger";
 import { Header } from "@/components/header";
 
 export default async function MainLayout({
@@ -21,8 +22,9 @@ export default async function MainLayout({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="flex h-full overflow-hidden">
+      <div className="relative flex h-full overflow-hidden">
         <Sidebar />
+        <SidebarTrigger />
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <Header />
           {children}
