@@ -1,20 +1,24 @@
 "use client";
 
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { MoreVertical } from "lucide-react";
-import type { TaskWithSubtasks } from "@/features/boards/queries";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  boardByIdQueryOptions,
+  type TaskWithSubtasks,
+} from "@/features/boards/queries";
 import { SubtaskItem } from "./subtask-item";
 
 type Props = {
@@ -24,34 +28,61 @@ type Props = {
 };
 
 export function TaskDetail({ task, open, onOpenChange }: Props) {
+  const { boardId } = useParams<{ boardId: string }>();
+  const { data: board } = useQuery(boardByIdQueryOptions(boardId));
+  const completedCount = task.subtasks.filter(s => s.completed).length;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <div className="flex items-center justify-between gap-4">
-            <DialogTitle>{task.title}</DialogTitle>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="rounded-full p-2 hover:bg-background">
-                  <MoreVertical />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-48 dark:bg-background">
-                <Button variant="link" className="text-muted-foreground">
-                  Edit Task
-                </Button>
-                <Button variant="link" className="text-destructive">
-                  Delete Task
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </div>
-          <DialogDescription>{task.description}</DialogDescription>
+          <DialogTitle
+            className="cursor-text rounded px-1 py-2 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            contentEditable
+            suppressContentEditableWarning
+          >
+            {task.title}
+          </DialogTitle>
         </DialogHeader>
+
+        <div
+          className="cursor-text rounded px-2 py-2 text-sm font-medium text-muted-foreground bg-background hover:bg-background/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-20"
+          contentEditable
+          suppressContentEditableWarning
+        >
+          {task.description ?? (
+            <span className="italic text-muted-foreground/50">
+              Add a description...
+            </span>
+          )}
+        </div>
+
+        {board && (
+          <div className="space-y-2">
+            <h4 className="text-sm">Current Status</h4>
+            <Select defaultValue={task.columnId}>
+              <SelectTrigger id="select-column">
+                <SelectValue placeholder="Select a column" />
+              </SelectTrigger>
+              <SelectContent>
+                {board.columns.map(col => (
+                  <SelectItem
+                    key={col.id}
+                    value={col.id}
+                    className="capitalize"
+                  >
+                    {col.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <div className="space-y-4">
           <div>
-            <h4 className="text-[12px] font-bold">
-              Subtasks ({task.subtasks.length})
+            <h4 className="text-sm">
+              Subtasks ({completedCount} of {task.subtasks.length})
             </h4>
           </div>
           <div className="space-y-2">
