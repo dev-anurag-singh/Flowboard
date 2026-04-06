@@ -56,3 +56,24 @@ export async function createTask(
     return task;
   });
 }
+
+export async function updateTask(
+  userId: string,
+  taskId: string,
+  data: Partial<Pick<typeof tasks.$inferInsert, "title" | "description" | "columnId" | "completed" | "order">>,
+) {
+  const [task] = await db
+    .update(tasks)
+    .set(data)
+    .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)))
+    .returning();
+  return task ?? null;
+}
+
+export async function deleteTask(userId: string, taskId: string) {
+  const [task] = await db
+    .delete(tasks)
+    .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)))
+    .returning();
+  return task ?? null;
+}
