@@ -9,6 +9,7 @@ export async function createTask(
     description?: string;
     columnId: string;
     boardId: string;
+    parentId?: string;
     subtasks?: { title: string }[];
   },
 ) {
@@ -35,6 +36,7 @@ export async function createTask(
         description: data.description,
         columnId: data.columnId,
         boardId: data.boardId,
+        parentId: data.parentId,
         userId,
         order: newOrder,
       })

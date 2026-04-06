@@ -8,6 +8,7 @@ export const CreateTaskSchema = z.object({
   subtasks: z
     .array(z.object({ title: z.string().min(1, "Subtask title is required").max(255) }))
     .optional(),
+  parentId: z.uuid().optional(),
 });
 
 export type TCreateTaskSchema = z.infer<typeof CreateTaskSchema>;

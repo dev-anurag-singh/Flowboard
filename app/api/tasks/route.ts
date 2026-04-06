@@ -21,13 +21,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const { title, description, columnId, boardId, subtasks } = parsed.data;
+    const { title, description, columnId, boardId, parentId, subtasks } = parsed.data;
 
     const task = await createTask(session.user.id, {
       title,
       description,
       columnId,
       boardId,
+      parentId,
       subtasks,
     });
 
