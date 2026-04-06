@@ -51,7 +51,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
           contentEditable
           suppressContentEditableWarning
         >
-          {task.description ?? (
+          {task.description || (
             <span className="italic text-muted-foreground/50">
               Add a description...
             </span>
