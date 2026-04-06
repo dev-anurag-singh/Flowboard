@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { getBoardById, deleteBoard, renameBoard } from "@/services/boards";
+import { getBoardById, deleteBoard, updateBoard } from "@/services/boards";
 
 export async function GET(
   _req: Request,
@@ -43,7 +43,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
-    const board = await renameBoard(session.user.id, boardId, name.trim());
+    const board = await updateBoard(session.user.id, boardId, { name: name.trim() });
 
     if (!board) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });

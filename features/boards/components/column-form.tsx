@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateColumn } from "@/features/boards/hooks/use-create-column";
+import { useRenameColumn } from "@/features/boards/hooks/use-rename-column";
 
 const ColumnSchema = z.object({
   name: z.string().min(1, "Column name is required").max(100),
@@ -15,13 +16,32 @@ const ColumnSchema = z.object({
 
 type TColumnSchema = z.infer<typeof ColumnSchema>;
 
-type Props = {
+type CreateProps = {
   boardId: string;
   onSuccess: () => void;
 };
 
-export function ColumnForm({ boardId, onSuccess }: Props) {
-  const { createColumn, isPending } = useCreateColumn(boardId);
+type EditProps = {
+  column: { id: string; boardId: string; name: string };
+  onSuccess: () => void;
+};
+
+type Props = CreateProps | EditProps;
+
+function isEditProps(props: Props): props is EditProps {
+  return "column" in props;
+}
+
+export function ColumnForm(props: Props) {
+  const isEdit = isEditProps(props);
+
+  const { createColumn, isPending: isCreating } = useCreateColumn(
+    isEdit ? "" : props.boardId,
+  );
+  const { renameColumn, isPending: isRenaming } = useRenameColumn();
+
+
+  const isPending = isEdit ? isRenaming : isCreating;
 
   const {
     register,
@@ -29,11 +49,18 @@ export function ColumnForm({ boardId, onSuccess }: Props) {
     formState: { errors },
   } = useForm<TColumnSchema>({
     resolver: zodResolver(ColumnSchema),
-    defaultValues: { name: "" },
+    defaultValues: { name: isEdit ? props.column.name : "" },
   });
 
   const onSubmit = (data: TColumnSchema) => {
-    createColumn(data.name, { onSuccess });
+    if (isEdit) {
+      renameColumn(
+        { columnId: props.column.id, boardId: props.column.boardId, name: data.name },
+        { onSuccess: props.onSuccess },
+      );
+    } else {
+      createColumn(data.name, { onSuccess: props.onSuccess });
+    }
   };
 
   return (
@@ -51,6 +78,8 @@ export function ColumnForm({ boardId, onSuccess }: Props) {
       <Button disabled={isPending}>
         {isPending ? (
           <Loader2 size={16} className="animate-spin" />
+        ) : isEdit ? (
+          "Save Changes"
         ) : (
           "Create Column"
         )}

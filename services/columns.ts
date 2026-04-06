@@ -23,3 +23,24 @@ export async function createColumn(
 
   return column;
 }
+
+export async function updateColumn(
+  userId: string,
+  columnId: string,
+  data: Partial<Pick<typeof columns.$inferInsert, "name" | "order">>,
+) {
+  const [column] = await db
+    .update(columns)
+    .set(data)
+    .where(and(eq(columns.id, columnId), eq(columns.userId, userId)))
+    .returning();
+  return column ?? null;
+}
+
+export async function deleteColumn(userId: string, columnId: string) {
+  const [column] = await db
+    .delete(columns)
+    .where(and(eq(columns.id, columnId), eq(columns.userId, userId)))
+    .returning();
+  return column ?? null;
+}

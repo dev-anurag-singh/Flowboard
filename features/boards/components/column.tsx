@@ -1,10 +1,9 @@
 "use client";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
 import type { ColumnWithTasks } from "@/features/boards/queries";
 import { TaskCard } from "./task-card";
+import { ColumnActions } from "./column-actions";
 
 function columnColor(id: string) {
   let hash = 0;
@@ -27,9 +26,9 @@ export function Column({ column }: { column: ColumnWithTasks }) {
             {column.name} ({column.tasks.length})
           </span>
         </div>
-        <Button size="sm" variant="ghost" className="h-8 w-8 shrink-0 p-0">
-          <Ellipsis size={16} />
-        </Button>
+        <ColumnActions
+          column={{ id: column.id, boardId: column.boardId, name: column.name }}
+        />
       </div>
       <ScrollArea className="h-full">
         <div className="space-y-4 pb-3">

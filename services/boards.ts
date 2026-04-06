@@ -43,10 +43,14 @@ export async function deleteBoard(userId: string, boardId: string) {
   return board ?? null;
 }
 
-export async function renameBoard(userId: string, boardId: string, name: string) {
+export async function updateBoard(
+  userId: string,
+  boardId: string,
+  data: Partial<Pick<typeof boards.$inferInsert, "name" | "order">>,
+) {
   const [board] = await db
     .update(boards)
-    .set({ name })
+    .set(data)
     .where(and(eq(boards.id, boardId), eq(boards.userId, userId)))
     .returning();
 
