@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -26,22 +26,25 @@ export function BoardActions({ boardId }: Props) {
     <>
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
-          <Button size="icon" variant="ghost">
-            <EllipsisVertical />
+          <Button size="icon-lg" variant="ghost">
+            <EllipsisVertical className="size-6!" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent sideOffset={12} align="end" className="w-48 dark:bg-background">
-          <Button variant="link" className="text-muted-foreground">
-            Edit Board
-          </Button>
+        <PopoverContent
+          sideOffset={12}
+          align="end"
+          className="w-40 p-3 dark:bg-background"
+        >
           <Button
             variant="link"
-            className="text-destructive"
+            size="xs"
+            className="w-full justify-start p-0 text-destructive"
             onClick={() => {
               setPopoverOpen(false);
               setDeleteOpen(true);
             }}
           >
+            <Trash2 />
             Delete Board
           </Button>
         </PopoverContent>

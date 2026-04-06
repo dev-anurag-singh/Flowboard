@@ -43,6 +43,16 @@ export async function deleteBoard(userId: string, boardId: string) {
   return board ?? null;
 }
 
+export async function renameBoard(userId: string, boardId: string, name: string) {
+  const [board] = await db
+    .update(boards)
+    .set({ name })
+    .where(and(eq(boards.id, boardId), eq(boards.userId, userId)))
+    .returning();
+
+  return board ?? null;
+}
+
 export async function createBoard(
   userId: string,
   name: string,
