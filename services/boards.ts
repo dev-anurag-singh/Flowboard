@@ -34,6 +34,15 @@ export async function getBoardById(userId: string, boardId: string) {
   return board ?? null;
 }
 
+export async function deleteBoard(userId: string, boardId: string) {
+  const [board] = await db
+    .delete(boards)
+    .where(and(eq(boards.id, boardId), eq(boards.userId, userId)))
+    .returning();
+
+  return board ?? null;
+}
+
 export async function createBoard(
   userId: string,
   name: string,

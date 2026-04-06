@@ -2,10 +2,10 @@
 
 import { useParams, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { PanelLeft, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { PanelLeft } from "lucide-react";
 import { boardsQueryOptions } from "@/features/boards/queries";
 import { useSidebarStore } from "@/store/sidebar";
+import { BoardActions } from "@/features/boards/components/board-actions";
 
 export function Header() {
   const { boardId } = useParams<{ boardId?: string }>();
@@ -38,16 +38,7 @@ export function Header() {
         )}
       </div>
 
-      {/* Right */}
-      <div className="flex items-center gap-2">
-        <Button size="sm" className="gap-1.5 md:h-10 md:px-5">
-          <Plus size={15} strokeWidth={3} />
-          <span className="hidden text-sm font-bold md:inline">
-            Add New Task
-          </span>
-        </Button>
-        {/* <BoardActions board={currentBoard} /> */}
-      </div>
+      {boardId && <BoardActions boardId={boardId} />}
     </header>
   );
 }
