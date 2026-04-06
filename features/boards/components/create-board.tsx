@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { BoardIcon } from "@/icons/board-icon";
 import { PlusIcon } from "lucide-react";
-import { CreateBoardForm } from "./create-board-form";
+import { CreateBoardForm } from "./board-form";
 
 type Props = {
   children?: React.ReactNode;

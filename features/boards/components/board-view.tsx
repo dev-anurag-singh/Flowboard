@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { boardByIdQueryOptions } from "@/features/boards/queries";
 import { Column } from "@/features/boards/components/column";
 import { Button } from "@/components/ui/button";
+import { CreateColumnModal } from "@/features/boards/components/create-column";
 import { LayoutTemplate, Plus } from "lucide-react";
 
 export function BoardView({ boardId }: { boardId: string }) {
@@ -22,10 +23,12 @@ export function BoardView({ boardId }: { boardId: string }) {
               Add a column to start organizing your tasks.
             </p>
           </div>
-          <Button className="gap-1.5">
-            <Plus size={15} strokeWidth={3} />
-            <span className="font-bold">Add New Column</span>
-          </Button>
+          <CreateColumnModal boardId={boardId}>
+            <Button className="gap-1.5">
+              <Plus size={15} strokeWidth={3} />
+              <span className="font-bold">Add New Column</span>
+            </Button>
+          </CreateColumnModal>
         </div>
       </main>
     );
@@ -37,9 +40,11 @@ export function BoardView({ boardId }: { boardId: string }) {
         <Column key={column.id} column={column} />
       ))}
       <div className="grid w-72 shrink-0 place-content-center rounded-md bg-(image:--background-image-column)">
-        <Button variant="link" className="text-2xl text-muted-foreground">
-          + New Column
-        </Button>
+        <CreateColumnModal boardId={boardId}>
+          <Button variant="link" className="text-2xl text-muted-foreground">
+            + New Column
+          </Button>
+        </CreateColumnModal>
       </div>
     </main>
   );

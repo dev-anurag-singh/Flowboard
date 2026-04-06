@@ -2,7 +2,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, ListTodo, ArrowRight, Plus } from "lucide-react";
-import { CreateBoardModal } from "@/features/boards/components/create-board-modal";
+import { CreateBoardModal } from "@/features/boards/components/create-board";
 import { BoardIcon } from "@/icons/board-icon";
 
 // ─── Placeholder data — replace with real service calls when ready ────────────

@@ -7,7 +7,7 @@ import { BoardIcon } from "@/icons/board-icon";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { boardsQueryOptions } from "@/features/boards/queries";
-import { CreateBoardModal } from "@/features/boards/components/create-board-modal";
+import { CreateBoardModal } from "@/features/boards/components/create-board";
 
 export function BoardList() {
   const { data: boards = [] } = useQuery(boardsQueryOptions);
