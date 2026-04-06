@@ -103,6 +103,9 @@ export const tasks = pgTable("tasks", {
   boardId: uuid("board_id")
     .notNull()
     .references(() => boards.id, { onDelete: "cascade" }),
+  parentId: uuid("parent_id").references((): any => tasks.id, {
+    onDelete: "cascade",
+  }),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" })
     .defaultNow()
@@ -122,7 +125,9 @@ export const columnsRelations = relations(columns, ({ one, many }) => ({
   tasks: many(tasks),
 }))
 
-export const tasksRelations = relations(tasks, ({ one }) => ({
+export const tasksRelations = relations(tasks, ({ one, many }) => ({
   board: one(boards, { fields: [tasks.boardId], references: [boards.id] }),
   column: one(columns, { fields: [tasks.columnId], references: [columns.id] }),
+  parent: one(tasks, { fields: [tasks.parentId], references: [tasks.id], relationName: "subtasks" }),
+  subtasks: many(tasks, { relationName: "subtasks" }),
 }))

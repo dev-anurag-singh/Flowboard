@@ -1,7 +1,8 @@
 import { db } from "./index"
 import { boards, columns, tasks } from "./schema"
 
-type TaskSeed = { title: string; order: number; description?: string }
+type SubtaskSeed = { title: string; order: number }
+type TaskSeed = { title: string; order: number; description?: string; subtasks?: SubtaskSeed[] }
 type ColumnSeed = { name: string; order: number; tasks: TaskSeed[] }
 type BoardSeed = { name: string; order: number; isDefault?: boolean; columns: ColumnSeed[] }
 
@@ -23,14 +24,30 @@ async function main() {
           name: "To Do",
           order: 1,
           tasks: [
-            { title: "Review project brief", order: 1 },
+            {
+              title: "Review project brief",
+              order: 1,
+              subtasks: [
+                { title: "Read through requirements doc", order: 1 },
+                { title: "Clarify open questions with stakeholders", order: 2 },
+              ],
+            },
             { title: "Schedule team sync", order: 2 },
           ],
         },
         {
           name: "In Progress",
           order: 2,
-          tasks: [{ title: "Respond to design feedback", order: 1 }],
+          tasks: [
+            {
+              title: "Respond to design feedback",
+              order: 1,
+              subtasks: [
+                { title: "Update button styles", order: 1 },
+                { title: "Fix spacing on mobile", order: 2 },
+              ],
+            },
+          ],
         },
         {
           name: "Done",
@@ -47,7 +64,15 @@ async function main() {
           name: "To Do",
           order: 1,
           tasks: [
-            { title: "Build UI for onboarding flow", order: 1 },
+            {
+              title: "Build UI for onboarding flow",
+              order: 1,
+              subtasks: [
+                { title: "Design welcome screen", order: 1 },
+                { title: "Build step indicators", order: 2 },
+                { title: "Add skip option", order: 3 },
+              ],
+            },
             { title: "Build UI for search", order: 2 },
             { title: "Build settings UI", order: 3 },
             { title: "QA and test all major user journeys", order: 4 },
@@ -152,14 +177,31 @@ async function main() {
         .returning()
 
       for (const t of c.tasks) {
-        await db.insert(tasks).values({
-          title: t.title,
-          description: t.description ?? null,
-          order: t.order,
-          userId,
-          columnId: createdColumn.id,
-          boardId: createdBoard.id,
-        })
+        const [createdTask] = await db
+          .insert(tasks)
+          .values({
+            title: t.title,
+            description: t.description ?? null,
+            order: t.order,
+            userId,
+            columnId: createdColumn.id,
+            boardId: createdBoard.id,
+            parentId: null,
+          })
+          .returning()
+
+        if (t.subtasks?.length) {
+          await db.insert(tasks).values(
+            t.subtasks.map((s) => ({
+              title: s.title,
+              order: s.order,
+              userId,
+              columnId: createdColumn.id,
+              boardId: createdBoard.id,
+              parentId: createdTask.id,
+            })),
+          )
+        }
       }
     }
   }
