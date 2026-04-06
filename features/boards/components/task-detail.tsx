@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -79,17 +80,18 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
           </div>
         )}
 
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-sm">
-              Subtasks ({completedCount} of {task.subtasks.length})
-            </h4>
-          </div>
+        <div className="space-y-3">
+          <h4 className="text-sm">
+            Subtasks ({completedCount} of {task.subtasks.length})
+          </h4>
           <div className="space-y-2">
             {task.subtasks.map(subtask => (
               <SubtaskItem key={subtask.id} subtask={subtask} />
             ))}
           </div>
+          <Button variant="secondary" className="w-full">
+            + Add New Subtask
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
