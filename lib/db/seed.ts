@@ -27,12 +27,17 @@ async function main() {
             {
               title: "Review project brief",
               order: 1,
+              description: "Go through the full project brief and make sure all requirements are understood before the kickoff meeting.",
               subtasks: [
                 { title: "Read through requirements doc", order: 1 },
                 { title: "Clarify open questions with stakeholders", order: 2 },
               ],
             },
-            { title: "Schedule team sync", order: 2 },
+            {
+              title: "Schedule team sync",
+              order: 2,
+              description: "Set up a recurring weekly sync with the team to align on progress and blockers.",
+            },
           ],
         },
         {
@@ -42,6 +47,7 @@ async function main() {
             {
               title: "Respond to design feedback",
               order: 1,
+              description: "Address the feedback from the last design review session and update the Figma file accordingly.",
               subtasks: [
                 { title: "Update button styles", order: 1 },
                 { title: "Fix spacing on mobile", order: 2 },
@@ -67,6 +73,7 @@ async function main() {
             {
               title: "Build UI for onboarding flow",
               order: 1,
+              description: "Implement the full onboarding UI based on the approved Figma designs, including all steps and transitions.",
               subtasks: [
                 { title: "Design welcome screen", order: 1 },
                 { title: "Build step indicators", order: 2 },
@@ -75,7 +82,7 @@ async function main() {
             },
             { title: "Build UI for search", order: 2 },
             { title: "Build settings UI", order: 3 },
-            { title: "QA and test all major user journeys", order: 4 },
+            { title: "QA and test all major user journeys", order: 4, description: "Run end-to-end tests across all critical user flows — signup, onboarding, core features, and edge cases." },
           ],
         },
         {
@@ -90,6 +97,7 @@ async function main() {
             {
               title: "Research pricing points of various competitors and trial different business models",
               order: 6,
+              description: "Analyse at least 5 competitors across pricing tiers, features, and positioning to inform our own pricing strategy.",
             },
           ],
         },

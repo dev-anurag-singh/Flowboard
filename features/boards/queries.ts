@@ -2,9 +2,10 @@ import { queryOptions } from "@tanstack/react-query";
 import type { boards, columns, tasks } from "@/lib/db/schema";
 
 type Board = typeof boards.$inferSelect;
-type Task = typeof tasks.$inferSelect;
-type Column = typeof columns.$inferSelect & { tasks: Task[] };
-export type BoardWithColumns = typeof boards.$inferSelect & { columns: Column[] };
+export type Task = typeof tasks.$inferSelect;
+export type TaskWithSubtasks = Task & { subtasks: Task[] };
+export type ColumnWithTasks = typeof columns.$inferSelect & { tasks: TaskWithSubtasks[] };
+export type BoardWithColumns = typeof boards.$inferSelect & { columns: ColumnWithTasks[] };
 
 export const boardsQueryOptions = queryOptions<Board[]>({
   queryKey: ["boards"],

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { boards, columns, tasks } from "@/lib/db/schema";
 
@@ -18,7 +18,13 @@ export async function getBoardById(userId: string, boardId: string) {
         orderBy: asc(columns.order),
         with: {
           tasks: {
+            where: isNull(tasks.parentId),
             orderBy: asc(tasks.order),
+            with: {
+              subtasks: {
+                orderBy: asc(tasks.order),
+              },
+            },
           },
         },
       },

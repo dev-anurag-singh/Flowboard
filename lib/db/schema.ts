@@ -7,6 +7,7 @@ import {
   primaryKey,
   uniqueIndex,
   uuid,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm"
 import type { AdapterAccountType } from "next-auth/adapters"
@@ -103,9 +104,10 @@ export const tasks = pgTable("tasks", {
   boardId: uuid("board_id")
     .notNull()
     .references(() => boards.id, { onDelete: "cascade" }),
-  parentId: uuid("parent_id").references((): any => tasks.id, {
+  parentId: uuid("parent_id").references((): AnyPgColumn => tasks.id, {
     onDelete: "cascade",
   }),
+  completed: boolean("completed").notNull().default(false),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" })
     .defaultNow()
