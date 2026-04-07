@@ -25,7 +25,7 @@ export function DeleteBoardModal({
   open,
   onOpenChange,
 }: Props) {
-  const { deleteBoard, isPending } = useDeleteBoard();
+  const { deleteBoard } = useDeleteBoard();
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -44,15 +44,12 @@ export function DeleteBoardModal({
         <AlertDialogFooter className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
           <Button
             variant="destructive"
-            disabled={isPending}
             onClick={() => deleteBoard(boardId)}
           >
             Delete
           </Button>
           <AlertDialogCancel asChild>
-            <Button variant="secondary" disabled={isPending}>
-              Cancel
-            </Button>
+            <Button variant="secondary">Cancel</Button>
           </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

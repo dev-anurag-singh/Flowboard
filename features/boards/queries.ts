@@ -20,6 +20,7 @@ export const boardsQueryOptions = queryOptions<Board[]>({
 export const boardByIdQueryOptions = (boardId: string) =>
   queryOptions<BoardWithColumns>({
     queryKey: ["boards", boardId],
+    staleTime: Infinity,
     queryFn: async () => {
       const res = await fetch(`/api/boards/${boardId}`);
       if (!res.ok) throw new Error("Failed to fetch board");

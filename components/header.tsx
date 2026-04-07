@@ -13,7 +13,7 @@ export function Header() {
   const { boardId } = useParams<{ boardId?: string }>();
   const { openSheet } = useSidebarStore();
   const { data: boards = [] } = useQuery(boardsQueryOptions);
-  const { renameBoard, isPending } = useRenameBoard();
+  const { renameBoard } = useRenameBoard();
 
   const pathname = usePathname();
   const currentBoard = boardId ? boards.find((b) => b.id === boardId) : null;
@@ -68,8 +68,7 @@ export function Header() {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 onKeyDown={handleKeyDown}
-                disabled={isPending}
-                className="max-w-[180px] truncate rounded-md border border-transparent bg-transparent px-1.5 py-0.5 text-[15px] font-bold text-foreground capitalize outline-none hover:border-border focus:border-primary disabled:opacity-50 md:max-w-48 lg:max-w-xs lg:text-lg"
+                className="max-w-[180px] truncate rounded-md border border-transparent bg-transparent px-1.5 py-0.5 text-[15px] font-bold text-foreground capitalize outline-none hover:border-border focus:border-primary md:max-w-48 lg:max-w-xs lg:text-lg"
               />
             ) : (
               <h1 className="max-w-[180px] truncate text-[15px] font-bold text-foreground md:max-w-48 lg:max-w-xs lg:text-lg">
