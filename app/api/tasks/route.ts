@@ -21,9 +21,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const { title, description, columnId, boardId, parentId, subtasks } = parsed.data;
+    const { id, title, description, columnId, boardId, parentId, subtasks } = parsed.data;
 
     const task = await createTask(session.user.id, {
+      id,
       title,
       description,
       columnId,

@@ -2,7 +2,7 @@
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X, Loader2 } from "lucide-react";
+import { X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,7 +27,7 @@ type Props = {
 
 export function TaskForm({ boardId, columnId, onSuccess }: Props) {
   const { data: board } = useQuery(boardByIdQueryOptions(boardId));
-  const { createTask, isPending } = useCreateTask(boardId);
+  const { createTask } = useCreateTask(boardId);
 
   const {
     control,
@@ -48,7 +48,8 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
   const { fields, append, remove } = useFieldArray({ control, name: "subtasks" });
 
   const onSubmit = (data: TCreateTaskSchema) => {
-    createTask(data, { onSuccess });
+    onSuccess();
+    createTask(data);
   };
 
   return (
@@ -60,7 +61,7 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
           id="task-title"
           placeholder="e.g. Take coffee break"
           error={errors.title?.message}
-          disabled={isPending}
+          disabled={false}
         />
       </div>
 
@@ -71,7 +72,7 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
           id="task-description"
           placeholder="e.g. It's always good to take a break"
           className="resize-none"
-          disabled={isPending}
+          disabled={false}
         />
       </div>
 
@@ -84,14 +85,14 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
                 {...register(`subtasks.${index}.title`)}
                 placeholder="e.g. Make coffee"
                 error={errors.subtasks?.[index]?.title?.message}
-                disabled={isPending}
+                disabled={false}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={() => remove(index)}
-                disabled={isPending}
+                disabled={false}
               >
                 <X size={16} />
               </Button>
@@ -101,7 +102,7 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
             type="button"
             variant="secondary"
             onClick={() => append({ title: "" })}
-            disabled={isPending}
+            disabled={false}
           >
             + Add New Subtask
           </Button>
@@ -117,7 +118,7 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
             <Select
               value={field.value}
               onValueChange={field.onChange}
-              disabled={isPending}
+              disabled={false}
             >
               <SelectTrigger id="task-column">
                 <SelectValue placeholder="Select a column" />
@@ -137,9 +138,7 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
         )}
       </div>
 
-      <Button disabled={isPending}>
-        {isPending ? <Loader2 size={16} className="animate-spin" /> : "Create Task"}
-      </Button>
+      <Button>Create Task</Button>
     </form>
   );
 }

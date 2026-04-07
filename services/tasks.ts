@@ -5,6 +5,7 @@ import { tasks } from "@/lib/db/schema";
 export async function createTask(
   userId: string,
   data: {
+    id?: string;
     title: string;
     description?: string;
     columnId: string;
@@ -32,6 +33,7 @@ export async function createTask(
     const [task] = await tx
       .insert(tasks)
       .values({
+        ...(data.id ? { id: data.id } : {}),
         title: data.title,
         description: data.description,
         columnId: data.columnId,

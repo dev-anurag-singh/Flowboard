@@ -4,27 +4,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { BoardWithColumns } from "@/features/boards/queries";
 
-type UpdateSubtaskData = {
-  subtaskId: string;
-  data: { title?: string; completed?: boolean };
-};
-
-export function useUpdateSubtask(boardId: string) {
+export function useDeleteTask(boardId: string) {
   const queryClient = useQueryClient();
   const queryKey = ["boards", boardId];
 
-  const { mutate: updateSubtask, isPending } = useMutation({
-    mutationFn: async ({ subtaskId, data }: UpdateSubtaskData) => {
-      const res = await fetch(`/api/tasks/${subtaskId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+  const { mutate: deleteTask, isPending } = useMutation({
+    mutationFn: async (taskId: string) => {
+      const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       return json.data;
     },
-    onMutate: async ({ subtaskId, data }) => {
+    onMutate: async (taskId) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
 
@@ -34,12 +25,7 @@ export function useUpdateSubtask(boardId: string) {
           ...old,
           columns: old.columns.map((col) => ({
             ...col,
-            tasks: col.tasks.map((t) => ({
-              ...t,
-              subtasks: t.subtasks.map((s) =>
-                s.id === subtaskId ? { ...s, ...data } : s,
-              ),
-            })),
+            tasks: col.tasks.filter((t) => t.id !== taskId),
           })),
         };
       });
@@ -50,7 +36,10 @@ export function useUpdateSubtask(boardId: string) {
       if (ctx?.previous) queryClient.setQueryData(queryKey, ctx.previous);
       toast.error(err.message);
     },
+    onSuccess: () => {
+      toast.success("Task deleted");
+    },
   });
 
-  return { updateSubtask, isPending };
+  return { deleteTask, isPending };
 }
