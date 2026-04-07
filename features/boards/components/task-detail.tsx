@@ -58,7 +58,7 @@ function NewSubtaskInput({
       <input
         ref={inputRef}
         onBlur={handleBlur}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === "Enter") inputRef.current?.blur();
           if (e.key === "Escape") onCancel();
         }}
@@ -76,7 +76,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
   const { createSubtask } = useCreateSubtask(boardId);
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
 
-  const completedCount = task.subtasks.filter((s) => s.completed).length;
+  const completedCount = task.subtasks.filter(s => s.completed).length;
 
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -99,11 +99,11 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="md:pt-7">
         <DialogHeader>
           <DialogTitle
             ref={titleRef}
-            className="cursor-text rounded px-1 py-2 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="cursor-text rounded px-1 py-1 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             contentEditable
             suppressContentEditableWarning
             onBlur={handleTitleBlur}
@@ -131,7 +131,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
             <h4 className="text-sm">Current Status</h4>
             <Select
               defaultValue={task.columnId}
-              onValueChange={(columnId) =>
+              onValueChange={columnId =>
                 updateTask({ taskId: task.id, data: { columnId } })
               }
             >
@@ -139,8 +139,12 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
                 <SelectValue placeholder="Select a column" />
               </SelectTrigger>
               <SelectContent>
-                {board.columns.map((col) => (
-                  <SelectItem key={col.id} value={col.id} className="capitalize">
+                {board.columns.map(col => (
+                  <SelectItem
+                    key={col.id}
+                    value={col.id}
+                    className="capitalize"
+                  >
                     {col.name}
                   </SelectItem>
                 ))}
@@ -154,13 +158,21 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
             Subtasks ({completedCount} of {task.subtasks.length})
           </h4>
           <div className="space-y-2">
-            {task.subtasks.map((subtask) => (
-              <SubtaskItem key={subtask.id} subtask={subtask} boardId={boardId} />
+            {task.subtasks.map(subtask => (
+              <SubtaskItem
+                key={subtask.id}
+                subtask={subtask}
+                boardId={boardId}
+              />
             ))}
             {isAddingSubtask && (
               <NewSubtaskInput
-                onSave={(title) => {
-                  createSubtask({ title, taskId: task.id, columnId: task.columnId });
+                onSave={title => {
+                  createSubtask({
+                    title,
+                    taskId: task.id,
+                    columnId: task.columnId,
+                  });
                   setIsAddingSubtask(false);
                 }}
                 onCancel={() => setIsAddingSubtask(false)}
