@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -35,13 +34,8 @@ function isEditProps(props: Props): props is EditProps {
 export function ColumnForm(props: Props) {
   const isEdit = isEditProps(props);
 
-  const { createColumn, isPending: isCreating } = useCreateColumn(
-    isEdit ? "" : props.boardId,
-  );
-  const { renameColumn, isPending: isRenaming } = useRenameColumn();
-
-
-  const isPending = isEdit ? isRenaming : isCreating;
+  const { createColumn } = useCreateColumn(isEdit ? "" : props.boardId);
+  const { renameColumn } = useRenameColumn();
 
   const {
     register,
@@ -54,36 +48,30 @@ export function ColumnForm(props: Props) {
 
   const onSubmit = (data: TColumnSchema) => {
     if (isEdit) {
-      renameColumn(
-        { columnId: props.column.id, boardId: props.column.boardId, name: data.name },
-        { onSuccess: props.onSuccess },
-      );
+      renameColumn({
+        columnId: props.column.id,
+        boardId: props.column.boardId,
+        name: data.name,
+      });
     } else {
-      createColumn(data.name, { onSuccess: props.onSuccess });
+      createColumn(data.name);
     }
+    props.onSuccess();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="column-name">Column Name</Label>
         <Input
           {...register("name")}
           id="column-name"
           placeholder="e.g. In Progress"
           error={errors.name?.message}
-          disabled={isPending}
+
         />
       </div>
-      <Button disabled={isPending}>
-        {isPending ? (
-          <Loader2 size={16} className="animate-spin" />
-        ) : isEdit ? (
-          "Save Changes"
-        ) : (
-          "Create Column"
-        )}
-      </Button>
+      <Button>{isEdit ? "Save Changes" : "Create Column"}</Button>
     </form>
   );
 }

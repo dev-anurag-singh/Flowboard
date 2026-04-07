@@ -27,7 +27,7 @@ export function DeleteColumnModal({
   open,
   onOpenChange,
 }: Props) {
-  const { deleteColumn, isPending } = useDeleteColumn();
+  const { deleteColumn } = useDeleteColumn();
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -46,15 +46,15 @@ export function DeleteColumnModal({
         <AlertDialogFooter className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
           <Button
             variant="destructive"
-            disabled={isPending}
-            onClick={() => deleteColumn({ columnId, boardId })}
+            onClick={() => {
+              deleteColumn({ columnId, boardId });
+              onOpenChange(false);
+            }}
           >
             Delete
           </Button>
           <AlertDialogCancel asChild>
-            <Button variant="secondary" disabled={isPending}>
-              Cancel
-            </Button>
+            <Button variant="secondary">Cancel</Button>
           </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

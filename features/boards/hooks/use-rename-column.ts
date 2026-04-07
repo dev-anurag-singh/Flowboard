@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { BoardWithColumns } from "@/features/boards/queries";
 
 export function useRenameColumn() {
   const queryClient = useQueryClient();
@@ -9,7 +10,6 @@ export function useRenameColumn() {
   const { mutate: renameColumn, isPending } = useMutation({
     mutationFn: async ({
       columnId,
-      boardId,
       name,
     }: {
       columnId: string;
@@ -23,13 +23,32 @@ export function useRenameColumn() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
-      return { ...json.data, boardId };
+      return json.data;
     },
-    onSuccess: ({ boardId }) => {
-      queryClient.invalidateQueries({ queryKey: ["boards", boardId] });
+    onMutate: async ({ columnId, boardId, name }) => {
+      const queryKey = ["boards", boardId];
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+
+      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          columns: old.columns.map((col) =>
+            col.id === columnId ? { ...col, name } : col,
+          ),
+        };
+      });
+
+      return { previous, boardId };
+    },
+    onError: (err, _, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(["boards", ctx.boardId], ctx.previous);
+      toast.error(err.message);
+    },
+    onSuccess: () => {
       toast.success("Column renamed");
     },
-    onError: (err: Error) => toast.error(err.message),
   });
 
   return { renameColumn, isPending };

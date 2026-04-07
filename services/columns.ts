@@ -6,6 +6,7 @@ export async function createColumn(
   userId: string,
   boardId: string,
   name: string,
+  id?: string,
 ) {
   const [lastColumn] = await db
     .select({ order: columns.order })
@@ -18,7 +19,7 @@ export async function createColumn(
 
   const [column] = await db
     .insert(columns)
-    .values({ name, userId, boardId, order: newOrder })
+    .values({ ...(id ? { id } : {}), name, userId, boardId, order: newOrder })
     .returning();
 
   return column;

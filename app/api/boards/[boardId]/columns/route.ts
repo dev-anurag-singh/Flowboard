@@ -6,6 +6,7 @@ import { createColumn } from "@/services/columns";
 
 const CreateColumnSchema = z.object({
   name: z.string().min(1, "Column name is required").max(100),
+  id: z.uuid().optional(),
 });
 
 export async function POST(
@@ -33,7 +34,7 @@ export async function POST(
       );
     }
 
-    const column = await createColumn(session.user.id, boardId, result.data.name);
+    const column = await createColumn(session.user.id, boardId, result.data.name, result.data.id);
     return NextResponse.json({ data: column }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
