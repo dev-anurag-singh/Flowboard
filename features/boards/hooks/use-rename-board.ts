@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 type Board = { id: string; name: string; [key: string]: unknown };
 
@@ -25,12 +25,12 @@ export function useRenameBoard() {
       await queryClient.cancelQueries({ queryKey: ["boards", boardId] });
 
       const previousList = queryClient.getQueryData<Board[]>(["boards"]);
-      const previousDetail = queryClient.getQueryData<BoardWithColumns>(["boards", boardId]);
+      const previousDetail = queryClient.getQueryData<BoardWithData>(["boards", boardId]);
 
       queryClient.setQueryData<Board[]>(["boards"], (old) =>
         old?.map((b) => (b.id === boardId ? { ...b, name } : b)),
       );
-      queryClient.setQueryData<BoardWithColumns>(["boards", boardId], (old) =>
+      queryClient.setQueryData<BoardWithData>(["boards", boardId], (old) =>
         old ? { ...old, name } : old,
       );
 

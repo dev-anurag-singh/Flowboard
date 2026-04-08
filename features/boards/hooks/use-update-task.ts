@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 type UpdateTaskData = {
   taskId: string;
@@ -31,37 +31,15 @@ export function useUpdateTask(boardId: string) {
     },
     onMutate: async ({ taskId, data }) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+      const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
-      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+      queryClient.setQueryData<BoardWithData>(queryKey, (old) => {
         if (!old) return old;
-
-        if (!data.columnId) {
-          return {
-            ...old,
-            columns: old.columns.map((col) => ({
-              ...col,
-              tasks: col.tasks.map((t) =>
-                t.id === taskId ? { ...t, ...data } : t,
-              ),
-            })),
-          };
-        }
-
-        const task = old.columns.flatMap((c) => c.tasks).find((t) => t.id === taskId);
-        if (!task) return old;
-
         return {
           ...old,
-          columns: old.columns.map((col) => {
-            if (col.id === task.columnId) {
-              return { ...col, tasks: col.tasks.filter((t) => t.id !== taskId) };
-            }
-            if (col.id === data.columnId) {
-              return { ...col, tasks: [...col.tasks, { ...task, ...data }] };
-            }
-            return col;
-          }),
+          tasks: old.tasks.map((t) =>
+            t.id === taskId ? { ...t, ...data } : t,
+          ),
         };
       });
 

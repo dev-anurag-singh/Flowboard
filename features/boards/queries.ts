@@ -1,13 +1,15 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { boards, columns, tasks } from "@/lib/db/schema";
 
-type Board = typeof boards.$inferSelect;
+export type Column = typeof columns.$inferSelect;
 export type Task = typeof tasks.$inferSelect;
 export type TaskWithSubtasks = Task & { subtasks: Task[] };
-export type ColumnWithTasks = typeof columns.$inferSelect & { tasks: TaskWithSubtasks[] };
-export type BoardWithColumns = typeof boards.$inferSelect & { columns: ColumnWithTasks[] };
+export type BoardWithData = typeof boards.$inferSelect & {
+  columns: Column[];
+  tasks: TaskWithSubtasks[];
+};
 
-export const boardsQueryOptions = queryOptions<Board[]>({
+export const boardsQueryOptions = queryOptions<(typeof boards.$inferSelect)[]>({
   queryKey: ["boards"],
   queryFn: async () => {
     const res = await fetch("/api/boards");
@@ -18,7 +20,7 @@ export const boardsQueryOptions = queryOptions<Board[]>({
 });
 
 export const boardByIdQueryOptions = (boardId: string) =>
-  queryOptions<BoardWithColumns>({
+  queryOptions<BoardWithData>({
     queryKey: ["boards", boardId],
     staleTime: Infinity,
     queryFn: async () => {

@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 export function useDeleteTask(boardId: string) {
   const queryClient = useQueryClient();
@@ -17,16 +17,13 @@ export function useDeleteTask(boardId: string) {
     },
     onMutate: async (taskId) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+      const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
-      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+      queryClient.setQueryData<BoardWithData>(queryKey, (old) => {
         if (!old) return old;
         return {
           ...old,
-          columns: old.columns.map((col) => ({
-            ...col,
-            tasks: col.tasks.filter((t) => t.id !== taskId),
-          })),
+          tasks: old.tasks.filter((t) => t.id !== taskId),
         };
       });
 

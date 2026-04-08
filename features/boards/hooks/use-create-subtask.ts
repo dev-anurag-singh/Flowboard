@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 type CreateSubtaskData = {
   title: string;
@@ -25,34 +25,31 @@ export function useCreateSubtask(boardId: string) {
       if (!res.ok) throw new Error(json.error);
       return json.data;
     },
-    onMutate: async ({ title, taskId, columnId, id }) => {
+    onMutate: async ({ title, taskId, id }) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+      const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
-      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+      queryClient.setQueryData<BoardWithData>(queryKey, (old) => {
         if (!old) return old;
         return {
           ...old,
-          columns: old.columns.map((col) => ({
-            ...col,
-            tasks: col.tasks.map((t) => {
-              if (t.id !== taskId) return t;
-              const tempSubtask = {
-                id,
-                title,
-                description: null,
-                completed: false,
-                order: t.subtasks.length,
-                userId: "",
-                boardId,
-                columnId,
-                parentId: taskId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              };
-              return { ...t, subtasks: [...t.subtasks, tempSubtask] };
-            }),
-          })),
+          tasks: old.tasks.map((t) => {
+            if (t.id !== taskId) return t;
+            const tempSubtask = {
+              id,
+              title,
+              description: null,
+              completed: false,
+              order: t.subtasks.length + 1,
+              userId: "",
+              boardId,
+              columnId: null,
+              parentId: taskId,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+            return { ...t, subtasks: [...t.subtasks, tempSubtask] };
+          }),
         };
       });
 

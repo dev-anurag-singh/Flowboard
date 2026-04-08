@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { TCreateTaskSchema } from "@/features/boards/schemas/task";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 type CreateTaskData = TCreateTaskSchema & { id: string };
 
@@ -24,43 +24,37 @@ export function useCreateTask(boardId: string) {
     },
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+      const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
-      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+      queryClient.setQueryData<BoardWithData>(queryKey, (old) => {
         if (!old) return old;
-        return {
-          ...old,
-          columns: old.columns.map((col) => {
-            if (col.id !== data.columnId) return col;
-            const tempTask = {
-              id: data.id,
-              title: data.title,
-              description: data.description ?? null,
-              order: col.tasks.length,
-              userId: "",
-              columnId: data.columnId,
-              boardId: data.boardId,
-              parentId: null,
-              completed: false,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              subtasks: (data.subtasks ?? []).map((s, i) => ({
-                id: crypto.randomUUID(),
-                title: s.title,
-                description: null,
-                order: i,
-                userId: "",
-                columnId: data.columnId,
-                boardId: data.boardId,
-                parentId: data.id,
-                completed: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              })),
-            };
-            return { ...col, tasks: [...col.tasks, tempTask] };
-          }),
+        const tempTask = {
+          id: data.id,
+          title: data.title,
+          description: data.description ?? null,
+          order: old.tasks.length + 1,
+          userId: "",
+          columnId: data.columnId ?? null,
+          boardId: data.boardId,
+          parentId: null,
+          completed: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          subtasks: (data.subtasks ?? []).map((s, i) => ({
+            id: crypto.randomUUID(),
+            title: s.title,
+            description: null,
+            order: i + 1,
+            userId: "",
+            columnId: data.columnId ?? null,
+            boardId: data.boardId,
+            parentId: data.id,
+            completed: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })),
         };
+        return { ...old, tasks: [...old.tasks, tempTask] };
       });
 
       return { previous };

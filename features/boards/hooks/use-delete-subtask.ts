@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 export function useDeleteSubtask(boardId: string) {
   const queryClient = useQueryClient();
@@ -17,18 +17,15 @@ export function useDeleteSubtask(boardId: string) {
     },
     onMutate: async (subtaskId) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+      const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
-      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+      queryClient.setQueryData<BoardWithData>(queryKey, (old) => {
         if (!old) return old;
         return {
           ...old,
-          columns: old.columns.map((col) => ({
-            ...col,
-            tasks: col.tasks.map((t) => ({
-              ...t,
-              subtasks: t.subtasks.filter((s) => s.id !== subtaskId),
-            })),
+          tasks: old.tasks.map((t) => ({
+            ...t,
+            subtasks: t.subtasks.filter((s) => s.id !== subtaskId),
           })),
         };
       });

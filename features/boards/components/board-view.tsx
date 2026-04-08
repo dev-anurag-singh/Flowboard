@@ -37,7 +37,11 @@ export function BoardView({ boardId }: { boardId: string }) {
   return (
     <main className="flex grow gap-5 overflow-x-auto p-4">
       {board.columns.map((column) => (
-        <Column key={column.id} column={column} />
+        <Column
+          key={column.id}
+          column={column}
+          tasks={board.tasks.filter((t) => t.columnId === column.id)}
+        />
       ))}
       <div className="grid w-72 shrink-0 place-content-center rounded-md bg-(image:--background-image-column)">
         <CreateColumnModal boardId={boardId}>

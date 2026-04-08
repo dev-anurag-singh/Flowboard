@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { BoardWithColumns } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 
 export function useCreateColumn(boardId: string) {
   const queryClient = useQueryClient();
@@ -21,9 +21,9 @@ export function useCreateColumn(boardId: string) {
     },
     onMutate: async ({ name, id }) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<BoardWithColumns>(queryKey);
+      const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
-      queryClient.setQueryData<BoardWithColumns>(queryKey, (old) => {
+      queryClient.setQueryData<BoardWithData>(queryKey, (old) => {
         if (!old) return old;
         const lastOrder = old.columns.at(-1)?.order ?? -1;
         const tempColumn = {

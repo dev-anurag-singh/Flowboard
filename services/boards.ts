@@ -16,15 +16,13 @@ export async function getBoardById(userId: string, boardId: string) {
     with: {
       columns: {
         orderBy: asc(columns.order),
+      },
+      tasks: {
+        where: isNull(tasks.parentId),
+        orderBy: asc(tasks.order),
         with: {
-          tasks: {
-            where: isNull(tasks.parentId),
+          subtasks: {
             orderBy: asc(tasks.order),
-            with: {
-              subtasks: {
-                orderBy: asc(tasks.order),
-              },
-            },
           },
         },
       },

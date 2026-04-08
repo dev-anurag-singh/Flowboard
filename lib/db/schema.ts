@@ -99,7 +99,6 @@ export const tasks = pgTable("tasks", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   columnId: uuid("column_id")
-    .notNull()
     .references(() => columns.id, { onDelete: "cascade" }),
   boardId: uuid("board_id")
     .notNull()
