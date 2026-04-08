@@ -40,7 +40,7 @@ export function CreateBoardForm({ onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="board-name">Board Name</Label>
         <Input
           {...register("name")}
@@ -51,7 +51,7 @@ export function CreateBoardForm({ onSuccess }: Props) {
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <Label>Columns</Label>
         <div className="flex flex-col gap-3">
           {fields.map((field, index) => (

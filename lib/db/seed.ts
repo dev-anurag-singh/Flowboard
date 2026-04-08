@@ -204,7 +204,6 @@ async function main() {
               title: s.title,
               order: s.order,
               userId,
-              columnId: createdColumn.id,
               boardId: createdBoard.id,
               parentId: createdTask.id,
             })),
