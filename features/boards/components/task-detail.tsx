@@ -1,8 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,13 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { boardByIdQueryOptions } from "@/features/boards/queries";
+import type { BoardWithData } from "@/features/boards/queries";
 import { SubtaskItem } from "./subtask-item";
 import { useUpdateTask } from "@/features/boards/hooks/use-update-task";
 import { useCreateTask } from "@/features/boards/hooks/use-create-task";
 import { useDeleteTask } from "@/features/boards/hooks/use-delete-task";
 
 type Props = {
+  board: BoardWithData;
   taskId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -68,15 +67,13 @@ function NewSubtaskInput({
   );
 }
 
-export function TaskDetail({ taskId, open, onOpenChange }: Props) {
-  const { boardId } = useParams<{ boardId: string }>();
-  const { data: board } = useQuery(boardByIdQueryOptions(boardId));
-  const { updateTask } = useUpdateTask(boardId);
-  const { createTask } = useCreateTask(boardId);
-  const { deleteTask } = useDeleteTask(boardId);
+export function TaskDetail({ board, taskId, open, onOpenChange }: Props) {
+  const { updateTask } = useUpdateTask(board.id);
+  const { createTask } = useCreateTask(board.id);
+  const { deleteTask } = useDeleteTask(board.id);
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
 
-  const task = board?.tasks.find(t => t.id === taskId);
+  const task = board.tasks.find(t => t.id === taskId);
 
   const completedCount = task?.subtasks.filter(s => s.completed).length ?? 0;
 
@@ -142,32 +139,30 @@ export function TaskDetail({ taskId, open, onOpenChange }: Props) {
               {task.description || null}
             </div>
 
-            {board && (
-              <div className="flex flex-col gap-2">
-                <h4 className="text-sm">Current Status</h4>
-                <Select
-                  defaultValue={task.columnId ?? undefined}
-                  onValueChange={columnId =>
-                    updateTask({ taskId: task.id, data: { columnId } })
-                  }
-                >
-                  <SelectTrigger id="select-column">
-                    <SelectValue placeholder="Select a column" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {board.columns.map(col => (
-                      <SelectItem
-                        key={col.id}
-                        value={col.id}
-                        className="capitalize"
-                      >
-                        {col.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            <div className="flex flex-col gap-2">
+              <h4 className="text-sm">Current Status</h4>
+              <Select
+                defaultValue={task.columnId ?? undefined}
+                onValueChange={columnId =>
+                  updateTask({ taskId: task.id, data: { columnId } })
+                }
+              >
+                <SelectTrigger id="select-column">
+                  <SelectValue placeholder="Select a column" />
+                </SelectTrigger>
+                <SelectContent>
+                  {board.columns.map(col => (
+                    <SelectItem
+                      key={col.id}
+                      value={col.id}
+                      className="capitalize"
+                    >
+                      {col.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="space-y-3">
               <h4 className="text-sm">
@@ -178,7 +173,7 @@ export function TaskDetail({ taskId, open, onOpenChange }: Props) {
                   <SubtaskItem
                     key={subtask.id}
                     subtask={subtask}
-                    boardId={boardId}
+                    boardId={board.id}
                   />
                 ))}
                 {isAddingSubtask && (

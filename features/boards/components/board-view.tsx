@@ -61,6 +61,7 @@ export function BoardView({ boardId }: { boardId: string }) {
 
       {selectedTaskId && (
         <TaskDetail
+          board={board}
           taskId={selectedTaskId}
           open={taskDetailOpen}
           onOpenChange={(open) => {
