@@ -10,10 +10,10 @@ export function useCreateColumn(boardId: string) {
 
   const { mutate: createColumn, isPending } = useMutation({
     mutationFn: async ({ name, id }: { name: string; id: string }) => {
-      const res = await fetch(`/api/boards/${boardId}/columns`, {
+      const res = await fetch("/api/columns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, id }),
+        body: JSON.stringify({ name, id, boardId }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
