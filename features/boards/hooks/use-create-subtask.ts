@@ -7,7 +7,6 @@ import type { BoardWithData } from "@/features/boards/queries";
 type CreateSubtaskData = {
   title: string;
   taskId: string;
-  columnId: string;
 };
 
 export function useCreateSubtask(boardId: string) {
@@ -15,18 +14,18 @@ export function useCreateSubtask(boardId: string) {
   const queryKey = ["boards", boardId];
 
   const { mutate: createSubtask, isPending } = useMutation({
-    mutationFn: async ({ title, taskId, columnId, id }: CreateSubtaskData & { id: string }) => {
+    mutationFn: async ({ title, taskId, id }: CreateSubtaskData & { id: string }) => {
       const res = await fetch("/api/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, columnId, boardId, parentId: taskId, id }),
+        body: JSON.stringify({ title, boardId, parentId: taskId, id }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       return json.data;
     },
-    onMutate: async ({ title, taskId, id }) => {
-      await queryClient.cancelQueries({ queryKey });
+    onMutate: ({ title, taskId, id }) => {
+      queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<BoardWithData>(queryKey);
 
       queryClient.setQueryData<BoardWithData>(queryKey, (old) => {

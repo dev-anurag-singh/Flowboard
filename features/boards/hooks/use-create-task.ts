@@ -41,7 +41,7 @@ export function useCreateTask(boardId: string) {
           createdAt: new Date(),
           updatedAt: new Date(),
           subtasks: (data.subtasks ?? []).map((s, i) => ({
-            id: crypto.randomUUID(),
+            id: s.id!,
             title: s.title,
             description: null,
             order: i + 1,
@@ -66,7 +66,11 @@ export function useCreateTask(boardId: string) {
   });
 
   const createTask = (data: TCreateTaskSchema) => {
-    mutate({ ...data, id: crypto.randomUUID() });
+    mutate({
+      ...data,
+      id: crypto.randomUUID(),
+      subtasks: (data.subtasks ?? []).map((s) => ({ ...s, id: crypto.randomUUID() })),
+    });
   };
 
   return { createTask };

@@ -11,7 +11,7 @@ export async function createTask(
     columnId?: string;
     boardId: string;
     parentId?: string;
-    subtasks?: { title: string }[];
+    subtasks?: { id?: string; title: string }[];
   },
 ) {
   let newOrder = 0;
@@ -58,6 +58,7 @@ export async function createTask(
     if (data.subtasks && data.subtasks.length > 0) {
       await tx.insert(tasks).values(
         data.subtasks.map((s, idx) => ({
+          ...(s.id ? { id: s.id } : {}),
           title: s.title,
           boardId: data.boardId,
           userId,

@@ -143,7 +143,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
           <div className="flex flex-col gap-2">
             <h4 className="text-sm">Current Status</h4>
             <Select
-              defaultValue={task.columnId}
+              defaultValue={task.columnId ?? undefined}
               onValueChange={columnId =>
                 updateTask({ taskId: task.id, data: { columnId } })
               }
@@ -181,11 +181,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
             {isAddingSubtask && (
               <NewSubtaskInput
                 onSave={title => {
-                  createSubtask({
-                    title,
-                    taskId: task.id,
-                    columnId: task.columnId,
-                  });
+                  createSubtask({ title, taskId: task.id });
                   setIsAddingSubtask(false);
                 }}
                 onCancel={() => setIsAddingSubtask(false)}
