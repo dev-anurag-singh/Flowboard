@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { boards, columns, tasks } from "@/lib/db/schema";
 
@@ -30,6 +30,31 @@ export async function getBoardById(userId: string, boardId: string) {
   });
 
   return board ?? null;
+}
+
+export async function getDashboardData(userId: string) {
+  const [boardList, columnCounts, taskCounts] = await Promise.all([
+    db.select().from(boards).where(eq(boards.userId, userId)).orderBy(desc(boards.updatedAt)),
+    db
+      .select({ boardId: columns.boardId, count: count() })
+      .from(columns)
+      .where(eq(columns.userId, userId))
+      .groupBy(columns.boardId),
+    db
+      .select({ boardId: tasks.boardId, count: count() })
+      .from(tasks)
+      .where(eq(tasks.userId, userId))
+      .groupBy(tasks.boardId),
+  ]);
+
+  const colMap = Object.fromEntries(columnCounts.map(r => [r.boardId, r.count]));
+  const taskMap = Object.fromEntries(taskCounts.map(r => [r.boardId, r.count]));
+
+  return boardList.map(board => ({
+    ...board,
+    columnCount: colMap[board.id] ?? 0,
+    taskCount: taskMap[board.id] ?? 0,
+  }));
 }
 
 export async function deleteBoard(userId: string, boardId: string) {

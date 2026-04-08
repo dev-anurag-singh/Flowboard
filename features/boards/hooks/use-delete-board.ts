@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-type Board = { id: string; [key: string]: unknown };
 
 export function useDeleteBoard() {
   const queryClient = useQueryClient();
@@ -17,21 +16,12 @@ export function useDeleteBoard() {
       if (!res.ok) throw new Error(json.error);
       return json.data;
     },
-    onMutate: async (boardId) => {
-      await queryClient.cancelQueries({ queryKey: ["boards"] });
-      const previousList = queryClient.getQueryData<Board[]>(["boards"]);
-
-      queryClient.setQueryData<Board[]>(["boards"], (old) =>
-        old?.filter((b) => b.id !== boardId),
-      );
-
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"], exact: true });
       router.push("/dashboard");
       toast.success("Board deleted");
-
-      return { previousList };
     },
-    onError: (err, _, ctx) => {
-      if (ctx?.previousList) queryClient.setQueryData(["boards"], ctx.previousList);
+    onError: (err) => {
       toast.error(err.message);
     },
   });
