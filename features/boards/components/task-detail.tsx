@@ -68,7 +68,7 @@ function NewSubtaskInput({
           if (e.key === "Escape") onCancel();
         }}
         placeholder="Subtask title"
-        className="flex-1 text-sm font-bold bg-transparent focus:outline-none placeholder:text-muted-foreground/50"
+        className="flex-1 text-base font-medium bg-transparent focus:outline-none placeholder:text-muted-foreground/50"
       />
       <button
         onMouseDown={e => e.preventDefault()}
@@ -148,7 +148,7 @@ export function TaskDetail({ board, taskId, open, onOpenChange }: Props) {
             <div
               ref={descriptionRef}
               data-placeholder="Add a description..."
-              className="cursor-text rounded px-2 py-2 text-sm font-semibold text-foreground/70 bg-background hover:bg-background/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-20"
+              className="cursor-text rounded px-2 py-2 text-base font-medium text-foreground/70 bg-background hover:bg-background/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-20"
               contentEditable
               suppressContentEditableWarning
               onBlur={handleDescriptionBlur}

@@ -16,7 +16,7 @@ export function Header() {
   const { renameBoard } = useRenameBoard();
 
   const pathname = usePathname();
-  const currentBoard = boardId ? boards.find((b) => b.id === boardId) : null;
+  const currentBoard = boardId ? boards.find(b => b.id === boardId) : null;
   const title =
     currentBoard?.name ?? (pathname === "/dashboard" ? "Dashboard" : null);
 
@@ -48,30 +48,30 @@ export function Header() {
   const isEditable = !!currentBoard;
 
   return (
-    <header className="flex shrink-0 items-center justify-between border-b bg-muted px-4 py-4 md:px-6 lg:py-5">
+    <header className="flex shrink-0 items-center justify-between border-b bg-muted pl-4 pr-2 py-4 md:pl-6 md:pr-4 lg:py-5">
       {/* Left */}
       <div className="flex items-center">
         {title && (
           <>
             <button
               onClick={openSheet}
-              className="mr-3 cursor-pointer text-muted-foreground transition-colors hover:text-foreground md:hidden"
+              className="mr-1.5 cursor-pointer text-primary transition-colors hover:text-primary/80 md:hidden"
               aria-label="Open sidebar"
             >
-              <PanelLeft size={24} />
+              <PanelLeft strokeWidth={2.5} size={24} />
             </button>
             {isEditable ? (
               <input
                 ref={inputRef}
                 value={editValue || currentBoard.name}
-                onChange={(e) => setEditValue(e.target.value)}
+                onChange={e => setEditValue(e.target.value)}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 onKeyDown={handleKeyDown}
                 className="max-w-[180px] truncate rounded-md border border-transparent bg-transparent px-1.5 py-0.5 text-[15px] font-bold text-foreground capitalize outline-none hover:border-border focus:border-primary md:max-w-48 lg:max-w-xs lg:text-lg"
               />
             ) : (
-              <h1 className="max-w-[180px] truncate text-[15px] font-bold text-foreground md:max-w-48 lg:max-w-xs lg:text-lg">
+              <h1 className="max-w-[180px] px-1.5 truncate text-[15px] font-bold text-foreground md:max-w-48 lg:max-w-xs lg:text-lg">
                 {title}
               </h1>
             )}

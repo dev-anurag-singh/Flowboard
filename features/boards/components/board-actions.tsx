@@ -30,11 +30,7 @@ export function BoardActions({ boardId }: Props) {
             <EllipsisVertical className="size-6!" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          sideOffset={12}
-          align="end"
-          className="w-40 p-3 dark:bg-background"
-        >
+        <PopoverContent align="end" className="w-40 p-3 dark:bg-background">
           <Button
             variant="link"
             size="xs"

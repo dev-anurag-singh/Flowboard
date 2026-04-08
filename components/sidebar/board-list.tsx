@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { boardsQueryOptions } from "@/features/boards/queries";
 import { CreateBoardModal } from "@/features/boards/components/create-board";
 
-export function BoardList() {
+export function BoardList({ onLinkClick }: { onLinkClick?: () => void }) {
   const { data: boards = [] } = useQuery(boardsQueryOptions);
   const pathname = usePathname();
 
@@ -31,6 +31,7 @@ export function BoardList() {
               )}
               key={id}
               href={`/board/${id}`}
+            onClick={onLinkClick}
             >
               <span className="z-10">
                 <BoardIcon />

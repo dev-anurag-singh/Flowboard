@@ -14,7 +14,7 @@ function Input({
         type={type}
         data-slot="input"
         className={cn(
-          "h-10 w-full min-w-0 rounded-md border border-input/25 bg-transparent px-4 py-2 text-sm font-medium file:border-0 file:bg-transparent file:text-xs file:font-medium placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+          "h-10 w-full min-w-0 rounded-md border border-input/25 bg-transparent px-3 py-2 text-base font-medium file:border-0 file:bg-transparent file:text-xs file:font-medium placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           error && "border-destructive focus-visible:border-destructive",
           className
         )}

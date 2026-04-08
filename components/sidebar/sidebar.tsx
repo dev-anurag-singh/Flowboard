@@ -11,11 +11,21 @@ import { BoardList } from "@/components/sidebar/board-list";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { IconEye } from "@/icons/icon-eye";
 
-function SidebarContent({ onClose }: { onClose: () => void }) {
+function SidebarContent({
+  onClose,
+  onLinkClick,
+}: {
+  onClose: () => void;
+  onLinkClick?: () => void;
+}) {
   return (
     <div className="flex h-full flex-col gap-5">
       <div className="p-6 pt-0 lg:px-8">
-        <Link href="/dashboard" className="inline-flex items-center">
+        <Link
+          href="/dashboard"
+          onClick={onLinkClick}
+          className="inline-flex items-center"
+        >
           <LogoSmall />
           <span className="ml-4 text-2xl font-bold leading-none text-foreground">
             Flowboard
@@ -23,7 +33,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
         </Link>
       </div>
 
-      <BoardList />
+      <BoardList onLinkClick={onLinkClick} />
 
       <ThemeToggle variant="sidebar" />
 
@@ -71,10 +81,15 @@ export function Sidebar() {
       <Sheet open={isSheetOpen} onOpenChange={open => !open && closeSheet()}>
         <SheetContent
           side="left"
-          className="w-full! max-w-[400px] bg-muted py-6 pb-4 text-muted-foreground"
+          aria-describedby={undefined}
+          className="w-full! max-w-[450px] bg-muted py-6 pb-4 text-muted-foreground duration-400"
+          onOpenAutoFocus={e => {
+            e.preventDefault();
+            (e.currentTarget as HTMLElement).focus();
+          }}
         >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <SidebarContent onClose={closeSheet} />
+          <SidebarContent onClose={closeSheet} onLinkClick={closeSheet} />
         </SheetContent>
       </Sheet>
     );

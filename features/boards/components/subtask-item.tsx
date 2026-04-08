@@ -29,11 +29,15 @@ export function SubtaskItem({ subtask, boardId }: Props) {
   };
 
   return (
-    <div className="group flex items-center gap-4 rounded-sm bg-background p-3">
+    <div className="group flex items-start gap-4 rounded-sm bg-background p-3">
       <Checkbox
+        className="mt-1 shrink-0"
         checked={subtask.completed}
-        onCheckedChange={(checked) =>
-          updateSubtask({ subtaskId: subtask.id, data: { completed: !!checked } })
+        onCheckedChange={checked =>
+          updateSubtask({
+            subtaskId: subtask.id,
+            data: { completed: !!checked },
+          })
         }
       />
       <span
@@ -42,15 +46,15 @@ export function SubtaskItem({ subtask, boardId }: Props) {
         suppressContentEditableWarning
         onBlur={handleTitleBlur}
         className={cn(
-          "flex-1 cursor-text text-sm font-bold focus-visible:outline-none",
-          subtask.completed && "text-muted-foreground line-through",
+          "flex-1 cursor-text text-base font-medium focus-visible:outline-none",
+          subtask.completed && "text-muted-foreground line-through"
         )}
       >
         {subtask.title}
       </span>
       <button
         onClick={() => deleteSubtask(subtask.id)}
-        className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100 text-muted-foreground hover:text-destructive"
+        className="mt-0.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 text-muted-foreground hover:text-destructive"
       >
         <X size={14} />
       </button>
