@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,13 +42,20 @@ function NewSubtaskInput({
     inputRef.current?.focus();
   }, []);
 
+  const handleSave = () => {
+    const value = inputRef.current?.value.trim() ?? "";
+    if (!value) return;
+    onSave(value);
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+  };
+
   const handleBlur = () => {
     const value = inputRef.current?.value.trim() ?? "";
-    if (value) {
-      onSave(value);
-    } else {
-      onCancel();
-    }
+    if (value) onSave(value);
+    onCancel();
   };
 
   return (
@@ -57,12 +64,19 @@ function NewSubtaskInput({
         ref={inputRef}
         onBlur={handleBlur}
         onKeyDown={e => {
-          if (e.key === "Enter") inputRef.current?.blur();
+          if (e.key === "Enter") handleSave();
           if (e.key === "Escape") onCancel();
         }}
         placeholder="Subtask title"
         className="flex-1 text-sm font-bold bg-transparent focus:outline-none placeholder:text-muted-foreground/50"
       />
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={handleSave}
+        className="shrink-0 cursor-pointer text-muted-foreground hover:text-primary"
+      >
+        <Check size={16} />
+      </button>
     </div>
   );
 }
@@ -100,7 +114,10 @@ export function TaskDetail({ board, taskId, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open && !!task} onOpenChange={onOpenChange}>
-      <DialogContent className="md:pt-7">
+      <DialogContent
+        className="md:pt-7 focus:outline-none focus-visible:outline-none"
+        onOpenAutoFocus={event => event.preventDefault()}
+      >
         {task && (
           <>
             <DialogHeader>
@@ -178,10 +195,7 @@ export function TaskDetail({ board, taskId, open, onOpenChange }: Props) {
                 ))}
                 {isAddingSubtask && (
                   <NewSubtaskInput
-                    onSave={title => {
-                      createTask({ title, parentId: task.id });
-                      setIsAddingSubtask(false);
-                    }}
+                    onSave={title => createTask({ title, parentId: task.id })}
                     onCancel={() => setIsAddingSubtask(false)}
                   />
                 )}
