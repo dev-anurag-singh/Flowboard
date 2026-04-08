@@ -24,7 +24,7 @@ import {
 } from "@/features/boards/queries";
 import { SubtaskItem } from "./subtask-item";
 import { useUpdateTask } from "@/features/boards/hooks/use-update-task";
-import { useCreateSubtask } from "@/features/boards/hooks/use-create-subtask";
+import { useCreateTask } from "@/features/boards/hooks/use-create-task";
 import { useDeleteTask } from "@/features/boards/hooks/use-delete-task";
 
 type Props = {
@@ -75,7 +75,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
   const { boardId } = useParams<{ boardId: string }>();
   const { data: board } = useQuery(boardByIdQueryOptions(boardId));
   const { updateTask } = useUpdateTask(boardId);
-  const { createSubtask } = useCreateSubtask(boardId);
+  const { createTask } = useCreateTask(boardId);
   const { deleteTask } = useDeleteTask(boardId);
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
 
@@ -181,7 +181,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
             {isAddingSubtask && (
               <NewSubtaskInput
                 onSave={title => {
-                  createSubtask({ title, taskId: task.id });
+                  createTask({ title, parentId: task.id });
                   setIsAddingSubtask(false);
                 }}
                 onCancel={() => setIsAddingSubtask(false)}

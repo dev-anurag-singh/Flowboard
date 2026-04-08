@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { auth } from "@/auth";
-import { CreateTaskSchema } from "@/features/boards/schemas/task";
-import { createTask } from "@/services/tasks";
+import { CreateTaskSchema } from "@/schemas/task";
+import { createTasks } from "@/services/tasks";
 
-// POST /api/tasks — creates a new task with optional subtasks
 export async function POST(req: Request) {
   try {
     const session = await auth();
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const parsed = CreateTaskSchema.safeParse(body);
+    const parsed = z.array(CreateTaskSchema).safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -21,20 +21,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const { id, title, description, columnId, boardId, parentId, subtasks } = parsed.data;
+    const tasks = await createTasks(session.user.id, parsed.data);
 
-    const task = await createTask(session.user.id, {
-      id,
-      title,
-      description,
-      columnId,
-      boardId,
-      parentId,
-      subtasks,
-    });
-
-    return NextResponse.json({ data: task }, { status: 201 });
+    return NextResponse.json({ data: tasks }, { status: 201 });
   } catch {
-    return NextResponse.json({ error: "Failed to create task" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create tasks" },
+      { status: 500 },
+    );
   }
 }

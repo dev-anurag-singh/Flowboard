@@ -1,74 +1,79 @@
 import { and, asc, desc, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { tasks } from "@/lib/db/schema";
+import type { CreateTaskItem } from "@/schemas/task";
 
-export async function createTask(
-  userId: string,
-  data: {
-    id?: string;
-    title: string;
-    description?: string;
-    columnId?: string;
-    boardId: string;
-    parentId?: string;
-    subtasks?: { id?: string; title: string }[];
-  },
-) {
-  let newOrder = 0;
-
-  if (data.parentId) {
-    const [last] = await db
-      .select({ order: tasks.order })
-      .from(tasks)
-      .where(and(eq(tasks.parentId, data.parentId), eq(tasks.userId, userId)))
-      .orderBy(desc(tasks.order))
-      .limit(1);
-    newOrder = last ? last.order + 1 : 0;
-  } else if (data.columnId) {
-    const [last] = await db
-      .select({ order: tasks.order })
-      .from(tasks)
-      .where(
-        and(
-          eq(tasks.columnId, data.columnId),
-          eq(tasks.userId, userId),
-          isNull(tasks.parentId),
-        ),
-      )
-      .orderBy(desc(tasks.order))
-      .limit(1);
-    newOrder = last ? last.order + 1 : 0;
-  }
-
+export async function createTasks(userId: string, items: CreateTaskItem[]) {
   return db.transaction(async (tx) => {
-    const [task] = await tx
-      .insert(tasks)
-      .values({
-        ...(data.id ? { id: data.id } : {}),
-        title: data.title,
-        description: data.description,
-        columnId: data.columnId,
-        boardId: data.boardId,
-        parentId: data.parentId,
-        userId,
-        order: newOrder,
-      })
-      .returning();
+    const parents = items.filter((i) => !i.parentId);
+    const subtasks = items.filter((i) => i.parentId);
+    const newParentIds = new Set(parents.map((p) => p.id));
 
-    if (data.subtasks && data.subtasks.length > 0) {
-      await tx.insert(tasks).values(
-        data.subtasks.map((s, idx) => ({
-          ...(s.id ? { id: s.id } : {}),
-          title: s.title,
-          boardId: data.boardId,
-          userId,
-          parentId: task.id,
-          order: idx,
-        })),
-      );
+    const values: (typeof tasks.$inferInsert)[] = [];
+
+    for (const parent of parents) {
+      let order = 0;
+      if (parent.columnId) {
+        const [last] = await tx
+          .select({ order: tasks.order })
+          .from(tasks)
+          .where(
+            and(
+              eq(tasks.columnId, parent.columnId),
+              eq(tasks.userId, userId),
+              isNull(tasks.parentId),
+            ),
+          )
+          .orderBy(desc(tasks.order))
+          .limit(1);
+        order = last ? last.order + 1 : 0;
+      }
+      values.push({
+        id: parent.id,
+        title: parent.title,
+        description: parent.description,
+        columnId: parent.columnId,
+        boardId: parent.boardId,
+        userId,
+        order,
+      });
     }
 
-    return task;
+    const subtasksByParent = new Map<string, typeof items>();
+    for (const sub of subtasks) {
+      const group = subtasksByParent.get(sub.parentId!) ?? [];
+      group.push(sub);
+      subtasksByParent.set(sub.parentId!, group);
+    }
+
+    for (const [parentId, subs] of subtasksByParent) {
+      let startOrder = 0;
+      if (!newParentIds.has(parentId)) {
+        const [last] = await tx
+          .select({ order: tasks.order })
+          .from(tasks)
+          .where(and(eq(tasks.parentId, parentId), eq(tasks.userId, userId)))
+          .orderBy(desc(tasks.order))
+          .limit(1);
+        startOrder = last ? last.order + 1 : 0;
+      }
+      for (let i = 0; i < subs.length; i++) {
+        values.push({
+          id: subs[i].id,
+          title: subs[i].title,
+          boardId: subs[i].boardId,
+          parentId,
+          userId,
+          order: startOrder + i,
+        });
+      }
+    }
+
+    if (values.length > 0) {
+      await tx.insert(tasks).values(values);
+    }
+
+    return values;
   });
 }
 

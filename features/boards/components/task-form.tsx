@@ -1,5 +1,6 @@
 "use client";
 
+import { z } from "zod";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
@@ -16,8 +17,22 @@ import {
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { boardByIdQueryOptions } from "@/features/boards/queries";
-import { CreateTaskSchema, type TCreateTaskSchema } from "@/features/boards/schemas/task";
 import { useCreateTask } from "@/features/boards/hooks/use-create-task";
+
+const CreateTaskFormSchema = z.object({
+  title: z.string().min(1, "Task title is required").max(255),
+  description: z.string().max(2000).optional(),
+  columnId: z.uuid("Select a column"),
+  subtasks: z
+    .array(
+      z.object({
+        title: z.string().min(1, "Subtask title is required").max(255),
+      }),
+    )
+    .optional(),
+});
+
+type CreateTaskFormData = z.infer<typeof CreateTaskFormSchema>;
 
 type Props = {
   boardId: string;
@@ -34,20 +49,19 @@ export function TaskForm({ boardId, columnId, onSuccess }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TCreateTaskSchema>({
-    resolver: zodResolver(CreateTaskSchema),
+  } = useForm<CreateTaskFormData>({
+    resolver: zodResolver(CreateTaskFormSchema),
     defaultValues: {
       title: "",
       description: "",
       columnId,
-      boardId,
       subtasks: [],
     },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "subtasks" });
 
-  const onSubmit = (data: TCreateTaskSchema) => {
+  const onSubmit = (data: CreateTaskFormData) => {
     onSuccess();
     createTask(data);
   };
