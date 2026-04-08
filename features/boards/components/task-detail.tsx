@@ -18,17 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  boardByIdQueryOptions,
-  type TaskWithSubtasks,
-} from "@/features/boards/queries";
+import { boardByIdQueryOptions } from "@/features/boards/queries";
 import { SubtaskItem } from "./subtask-item";
 import { useUpdateTask } from "@/features/boards/hooks/use-update-task";
 import { useCreateTask } from "@/features/boards/hooks/use-create-task";
 import { useDeleteTask } from "@/features/boards/hooks/use-delete-task";
 
 type Props = {
-  task: TaskWithSubtasks;
+  taskId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -71,7 +68,7 @@ function NewSubtaskInput({
   );
 }
 
-export function TaskDetail({ task, open, onOpenChange }: Props) {
+export function TaskDetail({ taskId, open, onOpenChange }: Props) {
   const { boardId } = useParams<{ boardId: string }>();
   const { data: board } = useQuery(boardByIdQueryOptions(boardId));
   const { updateTask } = useUpdateTask(boardId);
@@ -79,12 +76,15 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
   const { deleteTask } = useDeleteTask(boardId);
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
 
-  const completedCount = task.subtasks.filter(s => s.completed).length;
+  const task = board?.tasks.find(t => t.id === taskId);
+
+  const completedCount = task?.subtasks.filter(s => s.completed).length ?? 0;
 
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descriptionRef = useRef<HTMLDivElement>(null);
 
   const handleTitleBlur = () => {
+    if (!task) return;
     const newTitle = titleRef.current?.textContent?.trim() ?? "";
     if (newTitle && newTitle !== task.title) {
       updateTask({ taskId: task.id, data: { title: newTitle } });
@@ -94,6 +94,7 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
   };
 
   const handleDescriptionBlur = () => {
+    if (!task) return;
     const newDescription = descriptionRef.current?.textContent?.trim() ?? "";
     if (newDescription !== (task.description ?? "")) {
       updateTask({ taskId: task.id, data: { description: newDescription } });
@@ -101,102 +102,106 @@ export function TaskDetail({ task, open, onOpenChange }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open && !!task} onOpenChange={onOpenChange}>
       <DialogContent className="md:pt-7">
-        <DialogHeader>
-          <div className="flex items-start gap-2">
-            <DialogTitle
-              ref={titleRef}
-              className="flex-1 cursor-text rounded px-1 py-1 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        {task && (
+          <>
+            <DialogHeader>
+              <div className="flex items-start gap-2">
+                <DialogTitle
+                  ref={titleRef}
+                  className="flex-1 cursor-text rounded px-1 py-1 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={handleTitleBlur}
+                >
+                  {task.title}
+                </DialogTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0 text-muted-foreground hover:text-destructive"
+                  onClick={() => {
+                    onOpenChange(false);
+                    deleteTask(task.id);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </DialogHeader>
+
+            <div
+              ref={descriptionRef}
+              data-placeholder="Add a description..."
+              className="cursor-text rounded px-2 py-2 text-sm font-semibold text-foreground/70 bg-background hover:bg-background/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-20"
               contentEditable
               suppressContentEditableWarning
-              onBlur={handleTitleBlur}
+              onBlur={handleDescriptionBlur}
             >
-              {task.title}
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="shrink-0 text-muted-foreground hover:text-destructive"
-              onClick={() => {
-                onOpenChange(false);
-                deleteTask(task.id);
-              }}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </DialogHeader>
+              {task.description || null}
+            </div>
 
-        <div
-          ref={descriptionRef}
-          data-placeholder="Add a description..."
-          className="cursor-text rounded px-2 py-2 text-sm font-semibold text-foreground/70 bg-background hover:bg-background/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-20"
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={handleDescriptionBlur}
-        >
-          {task.description || null}
-        </div>
-
-        {board && (
-          <div className="flex flex-col gap-2">
-            <h4 className="text-sm">Current Status</h4>
-            <Select
-              defaultValue={task.columnId ?? undefined}
-              onValueChange={columnId =>
-                updateTask({ taskId: task.id, data: { columnId } })
-              }
-            >
-              <SelectTrigger id="select-column">
-                <SelectValue placeholder="Select a column" />
-              </SelectTrigger>
-              <SelectContent>
-                {board.columns.map(col => (
-                  <SelectItem
-                    key={col.id}
-                    value={col.id}
-                    className="capitalize"
-                  >
-                    {col.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        <div className="space-y-3">
-          <h4 className="text-sm">
-            Subtasks ({completedCount} of {task.subtasks.length})
-          </h4>
-          <div className="space-y-2">
-            {task.subtasks.map(subtask => (
-              <SubtaskItem
-                key={subtask.id}
-                subtask={subtask}
-                boardId={boardId}
-              />
-            ))}
-            {isAddingSubtask && (
-              <NewSubtaskInput
-                onSave={title => {
-                  createTask({ title, parentId: task.id });
-                  setIsAddingSubtask(false);
-                }}
-                onCancel={() => setIsAddingSubtask(false)}
-              />
+            {board && (
+              <div className="flex flex-col gap-2">
+                <h4 className="text-sm">Current Status</h4>
+                <Select
+                  defaultValue={task.columnId ?? undefined}
+                  onValueChange={columnId =>
+                    updateTask({ taskId: task.id, data: { columnId } })
+                  }
+                >
+                  <SelectTrigger id="select-column">
+                    <SelectValue placeholder="Select a column" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {board.columns.map(col => (
+                      <SelectItem
+                        key={col.id}
+                        value={col.id}
+                        className="capitalize"
+                      >
+                        {col.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
-          </div>
-          <Button
-            variant="secondary"
-            className="w-full"
-            onClick={() => setIsAddingSubtask(true)}
-            disabled={isAddingSubtask}
-          >
-            + Add New Subtask
-          </Button>
-        </div>
+
+            <div className="space-y-3">
+              <h4 className="text-sm">
+                Subtasks ({completedCount} of {task.subtasks.length})
+              </h4>
+              <div className="space-y-2">
+                {task.subtasks.map(subtask => (
+                  <SubtaskItem
+                    key={subtask.id}
+                    subtask={subtask}
+                    boardId={boardId}
+                  />
+                ))}
+                {isAddingSubtask && (
+                  <NewSubtaskInput
+                    onSave={title => {
+                      createTask({ title, parentId: task.id });
+                      setIsAddingSubtask(false);
+                    }}
+                    onCancel={() => setIsAddingSubtask(false)}
+                  />
+                )}
+              </div>
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => setIsAddingSubtask(true)}
+                disabled={isAddingSubtask}
+              >
+                + Add New Subtask
+              </Button>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

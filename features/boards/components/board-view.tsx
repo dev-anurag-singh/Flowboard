@@ -1,14 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { boardByIdQueryOptions } from "@/features/boards/queries";
 import { Column } from "@/features/boards/components/column";
+import { TaskDetail } from "@/features/boards/components/task-detail";
 import { Button } from "@/components/ui/button";
 import { CreateColumnModal } from "@/features/boards/components/create-column";
 import { LayoutTemplate, Plus } from "lucide-react";
 
 export function BoardView({ boardId }: { boardId: string }) {
   const { data: board } = useSuspenseQuery(boardByIdQueryOptions(boardId));
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [taskDetailOpen, setTaskDetailOpen] = useState(false);
 
   if (!board?.columns?.length) {
     return (
@@ -41,6 +45,10 @@ export function BoardView({ boardId }: { boardId: string }) {
           key={column.id}
           column={column}
           tasks={board.tasks.filter((t) => t.columnId === column.id)}
+          onSelectTask={(taskId) => {
+            setSelectedTaskId(taskId);
+            setTaskDetailOpen(true);
+          }}
         />
       ))}
       <div className="grid w-72 shrink-0 place-content-center rounded-md bg-(image:--background-image-column)">
@@ -50,6 +58,17 @@ export function BoardView({ boardId }: { boardId: string }) {
           </Button>
         </CreateColumnModal>
       </div>
+
+      {selectedTaskId && (
+        <TaskDetail
+          taskId={selectedTaskId}
+          open={taskDetailOpen}
+          onOpenChange={(open) => {
+            setTaskDetailOpen(open);
+            if (!open) setSelectedTaskId(null);
+          }}
+        />
+      )}
     </main>
   );
 }
