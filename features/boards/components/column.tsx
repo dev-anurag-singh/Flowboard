@@ -54,6 +54,7 @@ export function Column({ column, tasks, onSelectTask }: ColumnProps) {
           <div
             {...attributes}
             {...listeners}
+            suppressHydrationWarning
             className="flex w-56 cursor-grab items-center gap-2 overflow-hidden py-3 active:cursor-grabbing"
           >
             <span

@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { columns } from "@/lib/db/schema";
 
@@ -36,6 +36,36 @@ export async function updateColumn(
     .where(and(eq(columns.id, columnId), eq(columns.userId, userId)))
     .returning();
   return column ?? null;
+}
+
+export async function reorderColumn(
+  userId: string,
+  columnId: string,
+  toIndex: number,
+) {
+  return db.transaction(async tx => {
+    const [column] = await tx
+      .select()
+      .from(columns)
+      .where(and(eq(columns.id, columnId), eq(columns.userId, userId)));
+    if (!column) return null;
+
+    const boardColumns = await tx
+      .select()
+      .from(columns)
+      .where(and(eq(columns.boardId, column.boardId), eq(columns.userId, userId), ne(columns.id, columnId)))
+      .orderBy(asc(columns.order));
+
+    boardColumns.splice(toIndex, 0, column);
+
+    await Promise.all(
+      boardColumns.map((col, i) =>
+        tx.update(columns).set({ order: i }).where(eq(columns.id, col.id)),
+      ),
+    );
+
+    return { columnId, toIndex };
+  });
 }
 
 export async function deleteColumn(userId: string, columnId: string) {
