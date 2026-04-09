@@ -22,7 +22,7 @@ export function CreateTaskModal({ boardId, columnId }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="sticky bottom-0 mb-2 flex h-10 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed border-muted-foreground/20 bg-background text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">
+        <button className="flex h-10 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed border-muted-foreground/20 bg-background text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">
           <Plus size={14} />
           Add New Task
         </button>
