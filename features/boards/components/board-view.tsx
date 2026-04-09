@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   DndContext,
   DragOverlay,
@@ -11,16 +11,9 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import {
-  boardByIdQueryOptions,
-  type BoardWithData,
-  type Column as ColumnType,
-} from "@/features/boards/queries";
+import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { boardByIdQueryOptions, type Column as ColumnType } from "@/features/boards/queries";
+import { useReorderColumn } from "@/features/boards/hooks/use-reorder-column";
 import { Column, ColumnDragOverlay } from "@/features/boards/components/column";
 import { TaskDetail } from "@/features/boards/components/task-detail";
 import { Button } from "@/components/ui/button";
@@ -28,8 +21,8 @@ import { CreateColumnModal } from "@/features/boards/components/create-column";
 import { LayoutTemplate, Plus } from "lucide-react";
 
 export function BoardView({ boardId }: { boardId: string }) {
-  const queryClient = useQueryClient();
   const { data: board } = useSuspenseQuery(boardByIdQueryOptions(boardId));
+  const { reorderColumn } = useReorderColumn(boardId);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [taskDetailOpen, setTaskDetailOpen] = useState(false);
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
@@ -47,17 +40,7 @@ export function BoardView({ boardId }: { boardId: string }) {
     setActiveColumn(null);
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-
-    const oldIndex = board.columns.findIndex(c => c.id === active.id);
-    const newIndex = board.columns.findIndex(c => c.id === over.id);
-
-    queryClient.setQueryData<BoardWithData>(
-      boardByIdQueryOptions(boardId).queryKey,
-      old => {
-        if (!old) return old;
-        return { ...old, columns: arrayMove(old.columns, oldIndex, newIndex) };
-      }
-    );
+    reorderColumn(String(active.id), String(over.id));
   };
 
   if (!board?.columns?.length) {
