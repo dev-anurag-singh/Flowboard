@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { BoardList } from "@/components/sidebar/board-list";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { IconEye } from "@/icons/icon-eye";
+import { logout } from "@/features/auth/actions";
+import { LogOut } from "lucide-react";
 
 function SidebarContent({
   onClose,
@@ -37,13 +39,25 @@ function SidebarContent({
 
       <ThemeToggle variant="sidebar" />
 
-      <button
-        onClick={onClose}
-        className="relative z-10 mr-5 flex items-center gap-4 rounded-r-full px-6 py-4 text-[15px] font-bold transition-colors after:absolute after:left-0 after:top-0 after:-z-10 after:h-full after:w-0 after:rounded-r-full after:bg-secondary after:transition-all after:duration-300 hover:text-secondary-foreground hover:after:w-full lg:mr-6 lg:px-8"
-      >
-        <IconEye />
-        Hide Sidebar
-      </button>
+      <div className="mt-auto flex flex-col">
+        <form action={logout}>
+          <button
+            type="submit"
+            className="relative cursor-pointer z-10 mr-5 flex w-full items-center gap-4 rounded-r-full px-6 py-4 text-[15px] font-bold transition-colors after:absolute after:left-0 after:top-0 after:-z-10 after:h-full after:w-0 after:rounded-r-full after:bg-secondary after:transition-all after:duration-300 hover:text-destructive hover:after:w-full lg:mr-6 lg:px-8"
+          >
+            <LogOut size={18} />
+            Log Out
+          </button>
+        </form>
+
+        <button
+          onClick={onClose}
+          className="relative cursor-pointer z-10 mr-5 flex items-center gap-4 rounded-r-full px-6 py-4 text-[15px] font-bold transition-colors after:absolute after:left-0 after:top-0 after:-z-10 after:h-full after:w-0 after:rounded-r-full after:bg-secondary after:transition-all after:duration-300 hover:text-secondary-foreground hover:after:w-full lg:mr-6 lg:px-8"
+        >
+          <IconEye />
+          Hide Sidebar
+        </button>
+      </div>
     </div>
   );
 }
