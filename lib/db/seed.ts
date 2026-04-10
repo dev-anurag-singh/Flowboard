@@ -7,7 +7,8 @@ type ColumnSeed = { name: string; order: number; tasks: TaskSeed[] }
 type BoardSeed = { name: string; order: number; isDefault?: boolean; columns: ColumnSeed[] }
 
 async function main() {
-  const userId = "e3563798-3550-4b2a-a226-59fa34dcce22"
+  const userId = process.env.SEED_USER_ID
+  if (!userId) throw new Error("SEED_USER_ID is not set in .env.local")
 
   // Wipe existing data (order matters because of FKs)
   await db.delete(tasks)
