@@ -12,7 +12,7 @@ import { BoardActions } from "@/features/boards/components/board-actions";
 export function Header() {
   const { boardId } = useParams<{ boardId?: string }>();
   const { openSheet } = useSidebarStore();
-  const { data: boards = [] } = useQuery(boardsQueryOptions);
+  const { data: boards = [], isFetched } = useQuery(boardsQueryOptions);
   const { renameBoard } = useRenameBoard();
 
   const pathname = usePathname();
@@ -44,6 +44,8 @@ export function Header() {
       inputRef.current?.blur();
     }
   };
+
+  if (boardId && isFetched && !currentBoard) return null;
 
   const isEditable = !!currentBoard;
 

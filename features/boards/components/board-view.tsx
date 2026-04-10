@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { boardByIdQueryOptions, type TaskWithSubtasks } from "@/features/boards/queries";
+import { notFound } from "next/navigation";
+import { boardByIdQueryOptions, type BoardWithData, type TaskWithSubtasks } from "@/features/boards/queries";
 import { useReorderColumn } from "@/features/boards/hooks/use-reorder-column";
 import { useReorderTask } from "@/features/boards/hooks/use-reorder-task";
 import { useBoardDnd } from "@/features/boards/hooks/use-board-dnd";
@@ -18,6 +19,11 @@ import { LayoutTemplate, Plus } from "lucide-react";
 
 export function BoardView({ boardId }: { boardId: string }) {
   const { data: board } = useSuspenseQuery(boardByIdQueryOptions(boardId));
+  if (!board) notFound();
+  return <BoardContent boardId={boardId} board={board} />;
+}
+
+function BoardContent({ boardId, board }: { boardId: string; board: BoardWithData }) {
   const { reorderColumn } = useReorderColumn(boardId);
   const { reorderTask } = useReorderTask(boardId);
 
