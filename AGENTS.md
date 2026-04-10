@@ -196,55 +196,31 @@ export const boardsQueryOptions = queryOptions<Board[]>({
 - Tailwind is built for this — use its breakpoint prefixes in order: base → `sm:` → `md:` → `lg:` → `xl:`
 - Never design desktop-first and patch mobile after
 
----
+## Toasts
 
-## Migrating code from the previous repo
-
-When pasting code from the old repo, apply these transformations before using it:
-
-### Font sizes
-
-The old repo had a custom Tailwind `fontSize` config. This repo overrides `--text-sm` to `0.8125rem` (13px) in `globals.css` — so `text-sm` is the base body size. Map old classes as follows:
-
-| Old class | Old size | Use instead | This repo's size | Font weight |
-|-----------|----------|-------------|-----------------|-------------|
-| `text-2xl` | 1.5rem | `text-2xl` | 1.5rem (same) | `font-bold` |
-| `text-xl` | 1.125rem | `text-lg` | 1.125rem (same) | `font-bold` |
-| `text-lg` | 0.9375rem (15px) | `text-[15px]` | 15px (exact) | `font-bold` |
-| `text-md` | 0.75rem | `text-xs` | 0.75rem (same) | `font-bold` |
-| `text-base` | 0.8125rem | `text-sm` | 0.8125rem (exact) | `font-medium` |
-| `text-sm` | 0.75rem | `text-xs` | 0.75rem (same) | `font-bold` |
-
-### Zod
-
-| Old (v3) | New (v4) |
-|----------|----------|
-| `result.error.errors` | `result.error.issues` |
-| `z.string().email()` | `z.email()` |
-
----
-
-### Toast notifications
-
-Old repo used `react-hot-toast`. This repo uses **Sonner**. Replace all toast calls:
+Use **Sonner** for all toast notifications:
 
 ```ts
-// Old
-import toast from "react-hot-toast"
-toast("Message")
-toast.success("Saved!")
-toast.error("Failed!")
-toast.loading("Loading...")
-toast.dismiss()
-
-// New
 import { toast } from "sonner"
-toast("Message")
 toast.success("Saved!")
 toast.error("Failed!")
 toast.loading("Loading...")
 toast.dismiss()
 ```
+
+---
+
+## Font sizes
+
+`--text-sm` is overridden to `0.8125rem` (13px) in `globals.css` — `text-sm` is the base body size.
+
+| Class | Size | Typical weight |
+|-------|------|----------------|
+| `text-2xl` | 1.5rem | `font-bold` |
+| `text-lg` | 1.125rem | `font-bold` |
+| `text-[15px]` | 15px | `font-bold` |
+| `text-sm` | 0.8125rem | `font-medium` |
+| `text-xs` | 0.75rem | `font-bold` |
 
 ---
 
@@ -258,9 +234,9 @@ toast.dismiss()
 
 ## Keeping these rules up to date
 
-As we write code, new patterns and conventions will emerge. When that happens:
+When new patterns or conventions emerge during development:
 
-1. **Ask the user first** — propose the new rule and wait for approval before adding it
+1. **Propose first** — suggest the rule and wait for approval before adding it
 2. **Never auto-add** — do not silently update this file after writing code
 3. Once approved, add it to the relevant section — concise, with one clear example
 
@@ -268,4 +244,4 @@ Triggers to propose a new rule:
 - A new library or tool is added to the project
 - A pattern is used more than once that isn't documented here
 - A mistake is made that a rule would prevent in future
-- The user establishes a preference during a conversation
+- A preference is established during a conversation
