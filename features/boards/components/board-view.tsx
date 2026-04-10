@@ -1,21 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragStartEvent,
-} from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { boardByIdQueryOptions, type Column as ColumnType } from "@/features/boards/queries";
+import { boardByIdQueryOptions, type TaskWithSubtasks } from "@/features/boards/queries";
 import { useReorderColumn } from "@/features/boards/hooks/use-reorder-column";
+import { useReorderTask } from "@/features/boards/hooks/use-reorder-task";
+import { useBoardDnd } from "@/features/boards/hooks/use-board-dnd";
+import { tasksForColumn } from "@/features/boards/utils/column-tasks";
 import { Column, ColumnDragOverlay } from "@/features/boards/components/column";
+import { TaskCard } from "@/features/boards/components/task-card";
 import { TaskDetail } from "@/features/boards/components/task-detail";
 import { Button } from "@/components/ui/button";
 import { CreateColumnModal } from "@/features/boards/components/create-column";
@@ -24,26 +19,30 @@ import { LayoutTemplate, Plus } from "lucide-react";
 export function BoardView({ boardId }: { boardId: string }) {
   const { data: board } = useSuspenseQuery(boardByIdQueryOptions(boardId));
   const { reorderColumn } = useReorderColumn(boardId);
+  const { reorderTask } = useReorderTask(boardId);
+
+  const {
+    displayTasks,
+    collisionDetection,
+    sensors,
+    activeColumn,
+    activeTask,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    handleDragCancel,
+  } = useBoardDnd({ board, reorderColumn, reorderTask });
+
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [taskDetailOpen, setTaskDetailOpen] = useState(false);
-  const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
-  );
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const col = board.columns.find(c => c.id === event.active.id);
-    if (col) setActiveColumn(col);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    setActiveColumn(null);
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    reorderColumn(String(active.id), String(over.id));
-  };
+  const columnTasks = useMemo(() => {
+    const map = new Map<string, TaskWithSubtasks[]>();
+    for (const col of board.columns) {
+      map.set(col.id, tasksForColumn(displayTasks, col.id));
+    }
+    return map;
+  }, [board.columns, displayTasks]);
 
   if (!board?.columns?.length) {
     return (
@@ -73,8 +72,11 @@ export function BoardView({ boardId }: { boardId: string }) {
     <main className="flex min-h-0 grow gap-4 overflow-x-auto p-4">
       <DndContext
         sensors={sensors}
+        collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
       >
         <SortableContext
           items={board.columns.map(c => c.id)}
@@ -84,7 +86,7 @@ export function BoardView({ boardId }: { boardId: string }) {
             <Column
               key={column.id}
               column={column}
-              tasks={(board.tasks ?? []).filter(t => t.columnId === column.id)}
+              tasks={columnTasks.get(column.id) ?? []}
               onSelectTask={taskId => {
                 setSelectedTaskId(taskId);
                 setTaskDetailOpen(true);
@@ -93,14 +95,17 @@ export function BoardView({ boardId }: { boardId: string }) {
           ))}
         </SortableContext>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={{ duration: 180, easing: "ease-out" }}>
           {activeColumn && (
             <ColumnDragOverlay
               column={activeColumn}
-              tasks={(board.tasks ?? []).filter(
-                t => t.columnId === activeColumn.id
-              )}
+              tasks={(board.tasks ?? []).filter(t => t.columnId === activeColumn.id)}
             />
+          )}
+          {activeTask && (
+            <div className="rotate-1 scale-[1.03] cursor-grabbing drop-shadow-xl">
+              <TaskCard task={activeTask} onSelect={() => {}} />
+            </div>
           )}
         </DragOverlay>
       </DndContext>

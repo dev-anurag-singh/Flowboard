@@ -1,6 +1,6 @@
 "use client";
 
-import { useSortable } from "@dnd-kit/sortable";
+import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type {
   Column as ColumnType,
@@ -9,7 +9,6 @@ import type {
 import { TaskCard } from "./task-card";
 import { ColumnActions } from "./column-actions";
 import { CreateTaskModal } from "./create-task";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function columnColor(id: string) {
   let hash = 0;
@@ -76,17 +75,22 @@ export function Column({ column, tasks, onSelectTask }: ColumnProps) {
 
         {!isDragging && (
           <>
-            <ScrollArea className="min-h-0 flex-1 space-y-4 pb-3 pr-2.5">
-              <div className="space-y-4">
-                {tasks.map(task => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    onSelect={() => onSelectTask(task.id)}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
+            <div className="scrollbar-hidden min-h-0 flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-3 pr-2.5">
+              <SortableContext
+                items={tasks.map(t => t.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="min-h-2 space-y-4">
+                  {tasks.map(task => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onSelect={() => onSelectTask(task.id)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </div>
             <div className="pr-2.5 pb-3">
               <CreateTaskModal boardId={column.boardId} columnId={column.id} />
             </div>
