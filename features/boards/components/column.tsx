@@ -36,7 +36,7 @@ export function Column({ column, tasks, onSelectTask }: ColumnProps) {
   } = useSortable({ id: column.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
   };
 
@@ -55,7 +55,7 @@ export function Column({ column, tasks, onSelectTask }: ColumnProps) {
             {...attributes}
             {...listeners}
             suppressHydrationWarning
-            className="flex w-56 cursor-grab items-center gap-2 overflow-hidden py-3 active:cursor-grabbing"
+            className="flex w-56 cursor-grab items-center gap-2 overflow-hidden py-3 active:cursor-grabbing select-none touch-none"
           >
             <span
               className="h-4 w-4 shrink-0 rounded-full"
