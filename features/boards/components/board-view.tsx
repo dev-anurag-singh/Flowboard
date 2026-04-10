@@ -6,6 +6,7 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -28,7 +29,8 @@ export function BoardView({ boardId }: { boardId: string }) {
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
   );
 
   const handleDragStart = (event: DragStartEvent) => {
