@@ -1,3 +1,4 @@
+import "server-only";
 import { and, asc, count, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { boards, columns, tasks } from "@/lib/db/schema";

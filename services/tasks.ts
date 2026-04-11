@@ -1,3 +1,4 @@
+import "server-only";
 import { and, asc, desc, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { tasks } from "@/lib/db/schema";
