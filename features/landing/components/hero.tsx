@@ -81,7 +81,7 @@ export function Hero() {
               className="rounded-xl shadow-2xl overflow-hidden"
             >
               <Image
-                src="/hero-light.webp"
+                src="/hero-light.png"
                 alt="Flowboard kanban board"
                 width={2880}
                 height={2048}
@@ -89,7 +89,7 @@ export function Hero() {
                 className="w-full h-auto dark:hidden"
               />
               <Image
-                src="/hero-dark.webp"
+                src="/hero-dark.png"
                 alt="Flowboard kanban board"
                 width={2880}
                 height={2048}
